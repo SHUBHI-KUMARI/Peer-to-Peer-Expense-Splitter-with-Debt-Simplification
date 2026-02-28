@@ -16,11 +16,15 @@ export const createGroup = async (req: AuthRequest, res: Response): Promise<void
       data: {
         groupName,
         createdBy: userId,
-        members: {
-          create: { userId, role: "admin", isActive: true }
+        memberships: {
+          create: {
+            userId,
+            role: "admin",
+            isActive: true
+          }
         }
       },
-      include: { members: true }
+      include: { memberships: true }
     });
 
     res.status(201).json({ group });
@@ -36,14 +40,12 @@ export const getMyGroups = async (req: AuthRequest, res: Response): Promise<void
 
     const groups = await prisma.group.findMany({
       where: {
-        members: { some: { userId, isActive: true } },
+        memberships: { some: { userId, isActive: true } },
         isDeleted: false
       },
       include: {
-        members: {
-          include: {
-            user: { select: { userId: true, username: true, email: true, profileImg: true } }
-          }
+        memberships: {
+          include: { user: { select: { userId: true, username: true, email: true, profileImg: true } } }
         },
         _count: { select: { expenses: true } }
       }
@@ -64,13 +66,11 @@ export const getGroupById = async (req: AuthRequest, res: Response): Promise<voi
       where: {
         groupId,
         isDeleted: false,
-        members: { some: { userId, isActive: true } }
+        memberships: { some: { userId, isActive: true } }
       },
       include: {
-        members: {
-          include: {
-            user: { select: { userId: true, username: true, email: true, profileImg: true } }
-          }
+        memberships: {
+          include: { user: { select: { userId: true, username: true, email: true, profileImg: true } } }
         },
         expenses: {
           where: { isDeleted: false },

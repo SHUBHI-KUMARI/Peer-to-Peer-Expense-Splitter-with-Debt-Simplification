@@ -85,7 +85,6 @@ export const addExpense = async (req: AuthRequest, res: Response): Promise<void>
         title,
         description,
         amount: totalAmount,
-        splitType,
         splits: {
           create: splitData
         }
