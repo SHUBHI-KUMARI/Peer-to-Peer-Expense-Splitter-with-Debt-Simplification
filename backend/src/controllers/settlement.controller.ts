@@ -16,7 +16,7 @@ export const optimizeSettlement = async (req: AuthRequest, res: Response): Promi
         const groupId = parseInt(req.params.id as string);
 
         // Verify membership
-        const membership = await prisma.groupMembership.findFirst({
+        const membership = await prisma.group_memberships.findFirst({
             where: { groupId, userId, isActive: true },
         });
         if (!membership) {
@@ -25,15 +25,15 @@ export const optimizeSettlement = async (req: AuthRequest, res: Response): Promi
         }
 
         // Fetch all active members
-        const members = await prisma.groupMembership.findMany({
+        const members = await prisma.group_memberships.findMany({
             where: { groupId, isActive: true },
-            include: { user: { select: { userId: true, username: true, email: true, profileImg: true } } },
+            include: { users: { select: { userId: true, username: true, email: true, profileImg: true } } },
         });
 
         // Fetch all non-deleted expenses with their splits
         const expenses = await prisma.groupExpense.findMany({
             where: { groupId, isDeleted: false },
-            include: { splits: true },
+            include: { group_expense_splits: true },
         });
 
         // Already-paid settlements for this group
@@ -44,7 +44,7 @@ export const optimizeSettlement = async (req: AuthRequest, res: Response): Promi
         // Build net balance map: userId → net amount
         // positive = others owe you, negative = you owe others
         const balanceMap = new Map<number, number>();
-        members.forEach((m) => balanceMap.set(m.userId, 0));
+        members.forEach((m: any) => balanceMap.set(m.userId, 0));
 
         for (const expense of expenses) {
             // Payer is owed the full amount
@@ -53,7 +53,7 @@ export const optimizeSettlement = async (req: AuthRequest, res: Response): Promi
                 (balanceMap.get(expense.paidBy) || 0) + Number(expense.amount)
             );
             // Each split participant owes their share
-            for (const split of expense.splits) {
+            for (const split of expense.group_expense_splits) {
                 balanceMap.set(
                     split.userId,
                     (balanceMap.get(split.userId) || 0) - Number(split.shareAmount)
@@ -72,7 +72,7 @@ export const optimizeSettlement = async (req: AuthRequest, res: Response): Promi
         const beforeGraph = buildDebtGraph(
             expenses.map((e) => ({
                 paidBy: e.paidBy,
-                splits: e.splits.map((s) => ({ userId: s.userId, shareAmount: Number(s.shareAmount) })),
+                splits: e.group_expense_splits.map((s: any) => ({ userId: s.userId, shareAmount: Number(s.shareAmount) })),
             }))
         );
 
@@ -80,7 +80,7 @@ export const optimizeSettlement = async (req: AuthRequest, res: Response): Promi
         const mcfResult = minimumCashFlow(balanceMap);
 
         // Build user lookup for the response
-        const userMap = new Map(members.map((m) => [m.userId, m.user]));
+        const userMap = new Map(members.map((m: any) => [m.userId, m.users]));
 
         // Annotate transactions with user details
         const annotatedTransactions = mcfResult.transactions.map((t) => ({
@@ -97,8 +97,8 @@ export const optimizeSettlement = async (req: AuthRequest, res: Response): Promi
         }));
 
         // Balances per member
-        const memberBalances = members.map((m) => ({
-            user: m.user,
+        const memberBalances = members.map((m: any) => ({
+            user: m.users,
             balance: Math.round((balanceMap.get(m.userId) || 0) * 100) / 100,
             status:
                 (balanceMap.get(m.userId) || 0) > 0.005
@@ -147,7 +147,7 @@ export const confirmSettlement = async (req: AuthRequest, res: Response): Promis
         }
 
         // Verify membership (admin only)
-        const membership = await prisma.groupMembership.findFirst({
+        const membership = await prisma.group_memberships.findFirst({
             where: { groupId, userId, isActive: true },
         });
         if (!membership) {
@@ -166,8 +166,8 @@ export const confirmSettlement = async (req: AuthRequest, res: Response): Promis
                         amount: t.amount,
                     },
                     include: {
-                        payer: { select: { userId: true, username: true, email: true } },
-                        payee: { select: { userId: true, username: true, email: true } },
+                        users_settlements_paidByTousers: { select: { userId: true, username: true, email: true } },
+                        users_settlements_paidToTousers: { select: { userId: true, username: true, email: true } },
                     },
                 })
             )
@@ -211,20 +211,13 @@ export const completeSettlement = async (req: AuthRequest, res: Response): Promi
             return;
         }
 
-        // Mark related splits as settled if the settlement links to an expense
-        if (settlement.splitId) {
-            await prisma.groupExpenseSplit.update({
-                where: { splitId: settlement.splitId },
-                data: { isSettled: true },
-            });
-        }
-
-        // Return the settlement as confirmed
-        const updated = await prisma.settlement.findUnique({
+        // Update settlement to mark as completed
+        const updated = await prisma.settlement.update({
             where: { settlementId },
+            data: { isCompleted: true },
             include: {
-                payer: { select: { userId: true, username: true, email: true } },
-                payee: { select: { userId: true, username: true, email: true } },
+                users_settlements_paidByTousers: { select: { userId: true, username: true, email: true } },
+                users_settlements_paidToTousers: { select: { userId: true, username: true, email: true } },
             },
         });
 
@@ -246,7 +239,7 @@ export const getSettlementHistory = async (req: AuthRequest, res: Response): Pro
         const groupId = parseInt(req.params.id as string);
 
         // Verify membership
-        const membership = await prisma.groupMembership.findFirst({
+        const membership = await prisma.group_memberships.findFirst({
             where: { groupId, userId, isActive: true },
         });
         if (!membership) {
@@ -257,8 +250,8 @@ export const getSettlementHistory = async (req: AuthRequest, res: Response): Pro
         const settlements = await prisma.settlement.findMany({
             where: { groupId },
             include: {
-                payer: { select: { userId: true, username: true, email: true } },
-                payee: { select: { userId: true, username: true, email: true } },
+                users_settlements_paidByTousers: { select: { userId: true, username: true, email: true } },
+                users_settlements_paidToTousers: { select: { userId: true, username: true, email: true } },
             },
             orderBy: { createdAt: "desc" },
         });
