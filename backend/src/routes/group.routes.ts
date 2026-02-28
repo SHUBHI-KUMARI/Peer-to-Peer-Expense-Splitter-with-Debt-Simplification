@@ -7,6 +7,8 @@ import {
   inviteMember,
   getGroupBalances
 } from "../controllers/group.controller";
+import { getGroupMembers, removeMember } from "../controllers/group.controller";
+
 
 const router = Router();
 

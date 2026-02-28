@@ -21,7 +21,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const passwordHash = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
-      data: { username, email, passwordHash, phoneNumber },
+      data: { username, email, passwordHash, phoneNumber, updatedAt: new Date() },
       select: { userId: true, username: true, email: true, createdAt: true }
     });
 
@@ -125,3 +125,5 @@ export const refresh = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: "Server error", error: String(error) });
   }
 };
+
+// Removed invalid Prisma schema definitions from this file

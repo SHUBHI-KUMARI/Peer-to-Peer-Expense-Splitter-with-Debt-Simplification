@@ -2,7 +2,6 @@ import { Response } from "express";
 import { AuthRequest } from "../middleware/auth.middleware";
 import prisma from "../config/prisma";
 
-// Add a new expense
 export const addExpense = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.userId!;
@@ -14,8 +13,7 @@ export const addExpense = async (req: AuthRequest, res: Response): Promise<void>
       return;
     }
 
-    // Check membership
-    const membership = await prisma.groupMembership.findFirst({
+    const membership = await prisma.group_memberships.findFirst({
       where: { groupId, userId, isActive: true }
     });
 
@@ -24,23 +22,18 @@ export const addExpense = async (req: AuthRequest, res: Response): Promise<void>
       return;
     }
 
-    // Get all active members
-    const members = await prisma.groupMembership.findMany({
+    const members = await prisma.group_memberships.findMany({
       where: { groupId, isActive: true }
     });
 
     const memberIds = members.map(m => m.userId);
     const totalAmount = parseFloat(amount);
-
-    // Calculate splits based on type
     let splitData: { userId: number; shareAmount: number }[] = [];
 
     if (splitType === "equal") {
       const share = parseFloat((totalAmount / memberIds.length).toFixed(2));
       splitData = memberIds.map(id => ({ userId: id, shareAmount: share }));
-
     } else if (splitType === "percentage") {
-      // splits: [{ userId, percentage }]
       if (!splits || splits.length === 0) {
         res.status(400).json({ message: "splits array required for percentage split" });
         return;
@@ -49,9 +42,7 @@ export const addExpense = async (req: AuthRequest, res: Response): Promise<void>
         userId: s.userId,
         shareAmount: parseFloat(((s.percentage / 100) * totalAmount).toFixed(2))
       }));
-
     } else if (splitType === "exact") {
-      // splits: [{ userId, amount }]
       if (!splits || splits.length === 0) {
         res.status(400).json({ message: "splits array required for exact split" });
         return;
@@ -60,9 +51,7 @@ export const addExpense = async (req: AuthRequest, res: Response): Promise<void>
         userId: s.userId,
         shareAmount: parseFloat(s.amount.toFixed(2))
       }));
-
     } else if (splitType === "custom") {
-      // splits: [{ userId, shareAmount }]
       if (!splits || splits.length === 0) {
         res.status(400).json({ message: "splits array required for custom split" });
         return;
@@ -71,13 +60,11 @@ export const addExpense = async (req: AuthRequest, res: Response): Promise<void>
         userId: s.userId,
         shareAmount: parseFloat(s.shareAmount.toFixed(2))
       }));
-
     } else {
-      res.status(400).json({ message: "Invalid splitType. Use: equal, percentage, exact, custom" });
+      res.status(400).json({ message: "Invalid splitType" });
       return;
     }
 
-    // Create expense with splits in one transaction
     const expense = await prisma.groupExpense.create({
       data: {
         groupId,
@@ -85,11 +72,12 @@ export const addExpense = async (req: AuthRequest, res: Response): Promise<void>
         title,
         description,
         amount: totalAmount,
-        splits: {
+        splitType,
+        group_expense_splits: {
           create: splitData
         }
       },
-      include: { splits: true }
+      include: { group_expense_splits: true }
     });
 
     res.status(201).json({ expense });
@@ -99,7 +87,6 @@ export const addExpense = async (req: AuthRequest, res: Response): Promise<void>
   }
 };
 
-// Get all expenses for a group
 export const getExpenses = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.userId!;
@@ -108,7 +95,7 @@ export const getExpenses = async (req: AuthRequest, res: Response): Promise<void
     const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
 
-    const membership = await prisma.groupMembership.findFirst({
+    const membership = await prisma.group_memberships.findFirst({
       where: { groupId, userId, isActive: true }
     });
 
@@ -121,9 +108,9 @@ export const getExpenses = async (req: AuthRequest, res: Response): Promise<void
       prisma.groupExpense.findMany({
         where: { groupId, isDeleted: false },
         include: {
-          payer: { select: { userId: true, username: true, email: true } },
-          splits: {
-            include: { user: { select: { userId: true, username: true } } }
+          users: { select: { userId: true, username: true, email: true } },
+          group_expense_splits: {
+            include: { users: { select: { userId: true, username: true } } }
           }
         },
         orderBy: { createdAt: "desc" },
@@ -139,7 +126,6 @@ export const getExpenses = async (req: AuthRequest, res: Response): Promise<void
   }
 };
 
-// Edit an expense
 export const editExpense = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.userId!;
@@ -171,7 +157,6 @@ export const editExpense = async (req: AuthRequest, res: Response): Promise<void
   }
 };
 
-// Delete an expense (soft delete)
 export const deleteExpense = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.userId!;

@@ -16,20 +16,15 @@ export const createGroup = async (req: AuthRequest, res: Response): Promise<void
       data: {
         groupName,
         createdBy: userId,
-        memberships: {
-          create: {
-            userId,
-            role: "admin",
-            isActive: true
-          }
+        group_memberships: {
+          create: { userId, role: "admin", isActive: true }
         }
       },
-      include: { memberships: true }
+      include: { group_memberships: true }
     });
 
     res.status(201).json({ group });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Server error", error: String(error) });
   }
 };
@@ -40,14 +35,16 @@ export const getMyGroups = async (req: AuthRequest, res: Response): Promise<void
 
     const groups = await prisma.group.findMany({
       where: {
-        memberships: { some: { userId, isActive: true } },
+        group_memberships: { some: { userId, isActive: true } },
         isDeleted: false
       },
       include: {
-        memberships: {
-          include: { user: { select: { userId: true, username: true, email: true, profileImg: true } } }
+        group_memberships: {
+          include: {
+            users: { select: { userId: true, username: true, email: true, profileImg: true } }
+          }
         },
-        _count: { select: { expenses: true } }
+        _count: { select: { group_expenses: true } }
       }
     });
 
@@ -66,13 +63,15 @@ export const getGroupById = async (req: AuthRequest, res: Response): Promise<voi
       where: {
         groupId,
         isDeleted: false,
-        memberships: { some: { userId, isActive: true } }
+        group_memberships: { some: { userId, isActive: true } }
       },
       include: {
-        memberships: {
-          include: { user: { select: { userId: true, username: true, email: true, profileImg: true } } }
+        group_memberships: {
+          include: {
+            users: { select: { userId: true, username: true, email: true, profileImg: true } }
+          }
         },
-        expenses: {
+        group_expenses: {
           where: { isDeleted: false },
           orderBy: { createdAt: "desc" },
           take: 10
@@ -102,7 +101,7 @@ export const inviteMember = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
-    const membership = await prisma.groupMembership.findFirst({
+    const membership = await prisma.group_memberships.findFirst({
       where: { groupId, userId, role: "admin", isActive: true }
     });
 
@@ -118,7 +117,7 @@ export const inviteMember = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
-    const existing = await prisma.groupMembership.findFirst({
+    const existing = await prisma.group_memberships.findFirst({
       where: { groupId, userId: userToInvite.userId, isActive: true }
     });
 
@@ -127,10 +126,10 @@ export const inviteMember = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
-    const newMember = await prisma.groupMembership.create({
+    const newMember = await prisma.group_memberships.create({
       data: { groupId, userId: userToInvite.userId, role: "member", isActive: true },
       include: {
-        user: { select: { userId: true, username: true, email: true } }
+        users: { select: { userId: true, username: true, email: true } }
       }
     });
 
@@ -145,7 +144,7 @@ export const getGroupBalances = async (req: AuthRequest, res: Response): Promise
     const userId = req.userId!;
     const groupId = parseInt(req.params.id as string);
 
-    const membership = await prisma.groupMembership.findFirst({
+    const membership = await prisma.group_memberships.findFirst({
       where: { groupId, userId, isActive: true }
     });
 
@@ -154,14 +153,16 @@ export const getGroupBalances = async (req: AuthRequest, res: Response): Promise
       return;
     }
 
-    const members = await prisma.groupMembership.findMany({
+    const members = await prisma.group_memberships.findMany({
       where: { groupId, isActive: true },
-      include: { user: { select: { userId: true, username: true, email: true } } }
+      include: {
+        users: { select: { userId: true, username: true, email: true } }
+      }
     });
 
     const expenses = await prisma.groupExpense.findMany({
       where: { groupId, isDeleted: false },
-      include: { splits: true }
+      include: { group_expense_splits: true }
     });
 
     const balanceMap: Record<number, number> = {};
@@ -169,18 +170,92 @@ export const getGroupBalances = async (req: AuthRequest, res: Response): Promise
 
     expenses.forEach(expense => {
       balanceMap[expense.paidBy] = (balanceMap[expense.paidBy] || 0) + Number(expense.amount);
-      expense.splits.forEach(split => {
+      expense.group_expense_splits.forEach(split => {
         balanceMap[split.userId] = (balanceMap[split.userId] || 0) - Number(split.shareAmount);
       });
     });
 
     const balances = members.map(m => ({
-      user: m.user,
+      user: m.users,
       balance: parseFloat(balanceMap[m.userId].toFixed(2)),
       status: balanceMap[m.userId] > 0 ? "gets back" : balanceMap[m.userId] < 0 ? "owes" : "settled"
     }));
 
     res.json({ balances });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: String(error) });
+  }
+};
+
+export const getGroupMembers = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = req.userId!;
+    const groupId = parseInt(req.params.id as string);
+
+    const membership = await prisma.group_memberships.findFirst({
+      where: { groupId, userId, isActive: true }
+    });
+
+    if (!membership) {
+      res.status(403).json({ message: "Not a member of this group" });
+      return;
+    }
+
+    const members = await prisma.group_memberships.findMany({
+      where: { groupId, isActive: true },
+      include: {
+        users: {
+          select: {
+            userId: true,
+            username: true,
+            email: true,
+            profileImg: true,
+            createdAt: true
+          }
+        }
+      },
+      orderBy: { joinedAt: "asc" }
+    });
+
+    res.json({
+      members: members.map(m => ({
+        membershipId: m.membershipId,
+        role: m.role,
+        joinedAt: m.joinedAt,
+        user: m.users
+      }))
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: String(error) });
+  }
+};
+
+export const removeMember = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = req.userId!;
+    const groupId = parseInt(req.params.id as string);
+    const targetUserId = parseInt(req.params.userId as string);
+
+    const adminCheck = await prisma.group_memberships.findFirst({
+      where: { groupId, userId, role: "admin", isActive: true }
+    });
+
+    if (!adminCheck) {
+      res.status(403).json({ message: "Only admins can remove members" });
+      return;
+    }
+
+    if (userId === targetUserId) {
+      res.status(400).json({ message: "Admin cannot remove themselves" });
+      return;
+    }
+
+    await prisma.group_memberships.updateMany({
+      where: { groupId, userId: targetUserId },
+      data: { isActive: false }
+    });
+
+    res.json({ message: "Member removed successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: String(error) });
   }
