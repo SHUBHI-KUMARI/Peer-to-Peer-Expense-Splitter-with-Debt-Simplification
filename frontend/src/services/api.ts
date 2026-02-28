@@ -150,13 +150,23 @@ export interface Balance {
 export interface Settlement {
   settlementId: number
   groupId: number
-  payerId: number
-  payeeId: number
+  paidBy: number
+  paidTo: number
   amount: number
-  status: string
+  isCompleted: boolean
   createdAt: string
   payer?: Pick<User, 'userId' | 'username' | 'email'>
   payee?: Pick<User, 'userId' | 'username' | 'email'>
+}
+
+export interface PersonalExpense {
+  personalExpenseId: number
+  userId: number
+  title: string
+  description?: string | null
+  amount: number
+  category?: string | null
+  createdAt: string
 }
 
 export interface OptimizedTransaction {
@@ -242,6 +252,18 @@ export const groupsApi = {
   getBalances(groupId: number) {
     return request<{ balances: Balance[] }>(`/groups/${groupId}/balances`)
   },
+
+  getMembers(groupId: number) {
+    return request<{ members: { membershipId: number; role: string; joinedAt: string; user: Pick<User, 'userId' | 'username' | 'email' | 'profileImg'> }[] }>(
+      `/groups/${groupId}/members`,
+    )
+  },
+
+  removeMember(groupId: number, userId: number) {
+    return request<{ message: string }>(`/groups/${groupId}/members/${userId}`, {
+      method: 'DELETE',
+    })
+  },
 }
 
 /* ── Expenses API ── */
@@ -300,5 +322,59 @@ export const settlementsApi = {
 
   history(groupId: number) {
     return request<{ settlements: Settlement[] }>(`/groups/${groupId}/settle/history`)
+  },
+}
+
+/* -- Analytics API -- */
+export interface AnalyticsData {
+  summary: {
+    totalExpenses: number
+    totalSpent: number
+    totalMembers: number
+    completedSettlements: number
+    pendingSettlements: number
+  }
+  spendingByPerson: { name: string; amount: number }[]
+  spendingTimeline: { date: string; amount: number }[]
+  perPersonBreakdown: {
+    user: Pick<User, 'userId' | 'username'>
+    totalPaid: number
+    totalOwes: number
+    netBalance: number
+  }[]
+}
+
+export const analyticsApi = {
+  getGroupAnalytics(groupId: number) {
+    return request<AnalyticsData>(`/groups/${groupId}/analytics`)
+  },
+}
+
+/* -- Personal Expenses API -- */
+export const personalApi = {
+  add(data: { title: string; description?: string; amount: number; category?: string }) {
+    return request<{ expense: PersonalExpense }>('/personal', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  },
+
+  getAll(page = 1, limit = 20) {
+    return request<{ expenses: PersonalExpense[]; total: number; page: number; totalPages: number }>(
+      `/personal?page=${page}&limit=${limit}`,
+    )
+  },
+
+  update(id: number, data: { title?: string; description?: string; amount?: number; category?: string }) {
+    return request<{ expense: PersonalExpense }>(`/personal/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  },
+
+  delete(id: number) {
+    return request<{ message: string }>(`/personal/${id}`, {
+      method: 'DELETE',
+    })
   },
 }

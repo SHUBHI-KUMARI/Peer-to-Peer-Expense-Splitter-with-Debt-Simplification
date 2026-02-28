@@ -19,5 +19,7 @@ router.get("/", getMyGroups);
 router.get("/:id", getGroupById);
 router.post("/:id/invite", inviteMember);
 router.get("/:id/balances", getGroupBalances);
+router.get("/:id/members", getGroupMembers);
+router.delete("/:id/members/:userId", removeMember);
 
 export default router;

@@ -104,7 +104,7 @@ export const getExpenses = async (req: AuthRequest, res: Response): Promise<void
       return;
     }
 
-    const [expenses, total] = await Promise.all([
+    const [rawExpenses, total] = await Promise.all([
       prisma.groupExpense.findMany({
         where: { groupId, isDeleted: false },
         include: {
@@ -119,6 +119,27 @@ export const getExpenses = async (req: AuthRequest, res: Response): Promise<void
       }),
       prisma.groupExpense.count({ where: { groupId, isDeleted: false } })
     ]);
+
+    // reshape to match frontend types
+    const expenses = rawExpenses.map(e => ({
+      expenseId: e.expenseId,
+      groupId: e.groupId,
+      paidBy: e.paidBy,
+      title: e.title,
+      description: e.description,
+      amount: Number(e.amount),
+      splitType: e.splitType,
+      isDeleted: e.isDeleted,
+      createdAt: e.createdAt,
+      payer: e.users,
+      splits: e.group_expense_splits.map(s => ({
+        splitId: s.splitId,
+        expenseId: s.expenseId,
+        userId: s.userId,
+        shareAmount: Number(s.shareAmount),
+        user: s.users
+      }))
+    }));
 
     res.json({ expenses, total, page, totalPages: Math.ceil(total / limit) });
   } catch (error) {

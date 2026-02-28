@@ -7,6 +7,7 @@ dotenv.config();
 
 const pool = new Pool({
   connectionString: process.env.DIRECT_URL!,
+  allowExitOnIdle: false,
 });
 
 const adapter = new PrismaPg(pool);

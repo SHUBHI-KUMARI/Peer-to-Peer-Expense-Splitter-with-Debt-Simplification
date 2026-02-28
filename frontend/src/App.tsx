@@ -9,6 +9,9 @@ import DashboardHome from './pages/dashboard/DashboardHome'
 import GroupsPage from './pages/dashboard/GroupsPage'
 import GroupDetailPage from './pages/dashboard/GroupDetailPage'
 import SettlePage from './pages/dashboard/SettlePage'
+import PersonalExpensesPage from './pages/dashboard/PersonalExpensesPage'
+import AnalyticsPage from './pages/dashboard/AnalyticsPage'
+import SettingsPage from './pages/dashboard/SettingsPage'
 
 /* Redirect authenticated users away from auth pages */
 function GuestRoute({ children }: { children: React.ReactNode }) {
@@ -43,7 +46,10 @@ export default function App() {
             <Route index element={<DashboardHome />} />
             <Route path="groups" element={<GroupsPage />} />
             <Route path="groups/:id" element={<GroupDetailPage />} />
+            <Route path="expenses" element={<PersonalExpensesPage />} />
             <Route path="settle" element={<SettlePage />} />
+            <Route path="analytics" element={<AnalyticsPage />} />
+            <Route path="settings" element={<SettingsPage />} />
           </Route>
 
           {/* Default redirect */}

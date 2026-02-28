@@ -40,6 +40,7 @@ export const getMyGroups = async (req: AuthRequest, res: Response): Promise<void
       },
       include: {
         group_memberships: {
+          where: { isActive: true },
           include: {
             users: { select: { userId: true, username: true, email: true, profileImg: true } }
           }
@@ -48,7 +49,25 @@ export const getMyGroups = async (req: AuthRequest, res: Response): Promise<void
       }
     });
 
-    res.json({ groups });
+    // reshape to match frontend types
+    const shaped = groups.map(g => ({
+      groupId: g.groupId,
+      groupName: g.groupName,
+      createdBy: g.createdBy,
+      isDeleted: g.isDeleted,
+      createdAt: g.createdAt,
+      memberships: g.group_memberships.map(m => ({
+        membershipId: m.membershipId,
+        userId: m.userId,
+        groupId: m.groupId,
+        role: m.role,
+        isActive: m.isActive,
+        user: m.users
+      })),
+      _count: { expenses: g._count.group_expenses }
+    }));
+
+    res.json({ groups: shaped });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: String(error) });
   }
@@ -67,6 +86,7 @@ export const getGroupById = async (req: AuthRequest, res: Response): Promise<voi
       },
       include: {
         group_memberships: {
+          where: { isActive: true },
           include: {
             users: { select: { userId: true, username: true, email: true, profileImg: true } }
           }
@@ -74,7 +94,13 @@ export const getGroupById = async (req: AuthRequest, res: Response): Promise<voi
         group_expenses: {
           where: { isDeleted: false },
           orderBy: { createdAt: "desc" },
-          take: 10
+          take: 10,
+          include: {
+            users: { select: { userId: true, username: true, email: true } },
+            group_expense_splits: {
+              include: { users: { select: { userId: true, username: true } } }
+            }
+          }
         }
       }
     });
@@ -84,7 +110,43 @@ export const getGroupById = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
-    res.json({ group });
+    // reshape to match frontend types
+    const shaped = {
+      groupId: group.groupId,
+      groupName: group.groupName,
+      createdBy: group.createdBy,
+      isDeleted: group.isDeleted,
+      createdAt: group.createdAt,
+      memberships: group.group_memberships.map(m => ({
+        membershipId: m.membershipId,
+        userId: m.userId,
+        groupId: m.groupId,
+        role: m.role,
+        isActive: m.isActive,
+        user: m.users
+      })),
+      expenses: group.group_expenses.map(e => ({
+        expenseId: e.expenseId,
+        groupId: e.groupId,
+        paidBy: e.paidBy,
+        title: e.title,
+        description: e.description,
+        amount: Number(e.amount),
+        splitType: e.splitType,
+        isDeleted: e.isDeleted,
+        createdAt: e.createdAt,
+        payer: e.users,
+        splits: e.group_expense_splits.map(s => ({
+          splitId: s.splitId,
+          expenseId: s.expenseId,
+          userId: s.userId,
+          shareAmount: Number(s.shareAmount),
+          user: s.users
+        }))
+      }))
+    };
+
+    res.json({ group: shaped });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: String(error) });
   }

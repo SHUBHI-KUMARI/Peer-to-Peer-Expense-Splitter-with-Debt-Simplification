@@ -5,6 +5,7 @@ import {
   Users,
   Receipt,
   Zap,
+  BarChart3,
   Settings,
   LogOut,
 } from 'lucide-react'
@@ -15,6 +16,7 @@ const navItems = [
   { to: '/dashboard/groups', icon: Users, label: 'Groups' },
   { to: '/dashboard/expenses', icon: Receipt, label: 'Expenses' },
   { to: '/dashboard/settle', icon: Zap, label: 'Settle Up' },
+  { to: '/dashboard/analytics', icon: BarChart3, label: 'Analytics' },
 ]
 
 export default function DashboardLayout() {

@@ -82,42 +82,41 @@ export const optimizeSettlement = async (req: AuthRequest, res: Response): Promi
         // Build user lookup for the response
         const userMap = new Map(members.map((m: any) => [m.userId, m.users]));
 
-        // Annotate transactions with user details
+        // Annotate transactions with flat from/to ids and names
         const annotatedTransactions = mcfResult.transactions.map((t) => ({
-            from: userMap.get(t.from) || { userId: t.from, username: "Unknown", email: "" },
-            to: userMap.get(t.to) || { userId: t.to, username: "Unknown", email: "" },
+            from: t.from,
+            fromName: (userMap.get(t.from) as any)?.username || "Unknown",
+            to: t.to,
+            toName: (userMap.get(t.to) as any)?.username || "Unknown",
             amount: t.amount,
         }));
 
-        // Annotate before-graph edges
+        // Annotate before-graph edges with flat ids and names
         const annotatedBeforeGraph = beforeGraph.map((e) => ({
-            from: userMap.get(e.from) || { userId: e.from, username: "Unknown", email: "" },
-            to: userMap.get(e.to) || { userId: e.to, username: "Unknown", email: "" },
+            from: e.from,
+            fromName: (userMap.get(e.from) as any)?.username || "Unknown",
+            to: e.to,
+            toName: (userMap.get(e.to) as any)?.username || "Unknown",
             amount: e.amount,
         }));
 
-        // Balances per member
+        // Balances per member (flat shape for frontend)
         const memberBalances = members.map((m: any) => ({
-            user: m.users,
+            userId: m.userId,
+            username: m.users.username,
             balance: Math.round((balanceMap.get(m.userId) || 0) * 100) / 100,
-            status:
-                (balanceMap.get(m.userId) || 0) > 0.005
-                    ? "gets back"
-                    : (balanceMap.get(m.userId) || 0) < -0.005
-                        ? "owes"
-                        : "settled",
         }));
 
         res.json({
             groupId,
             memberBalances,
             beforeGraph: annotatedBeforeGraph,
-            afterGraph: annotatedTransactions, // optimized = the "after" graph
+            afterGraph: annotatedTransactions,
             optimization: {
-                totalTransactions: mcfResult.totalTransactions,
-                naiveTransactions: mcfResult.naiveTransactions,
-                transactionsSaved: mcfResult.transactionsSaved,
-                reductionPercent: mcfResult.reductionPercent,
+                before: mcfResult.naiveTransactions,
+                after: mcfResult.totalTransactions,
+                saved: mcfResult.transactionsSaved,
+                percentSaved: mcfResult.reductionPercent,
             },
             transactions: annotatedTransactions,
         });
@@ -138,7 +137,7 @@ export const confirmSettlement = async (req: AuthRequest, res: Response): Promis
         const userId = req.userId!;
         const groupId = parseInt(req.params.id as string);
         const { transactions } = req.body as {
-            transactions: { fromUserId: number; toUserId: number; amount: number }[];
+            transactions: { from: number; to: number; amount: number }[];
         };
 
         if (!transactions || !Array.isArray(transactions) || transactions.length === 0) {
@@ -161,8 +160,8 @@ export const confirmSettlement = async (req: AuthRequest, res: Response): Promis
                 prisma.settlement.create({
                     data: {
                         groupId,
-                        paidBy: t.fromUserId,
-                        paidTo: t.toUserId,
+                        paidBy: t.from,
+                        paidTo: t.to,
                         amount: t.amount,
                     },
                     include: {
