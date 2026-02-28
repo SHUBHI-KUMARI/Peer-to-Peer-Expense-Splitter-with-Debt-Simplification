@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/auth.routes";
 import groupRoutes from "./routes/group.routes";
 import expenseRoutes from "./routes/expense.routes";
+import settlemenRoutes from "./routes/settlement.routes";
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/groups", groupRoutes);
 app.use("/api", expenseRoutes);
+app.use('/api', settlemenRoutes)
 
 
 const PORT = process.env.PORT || 3000;
