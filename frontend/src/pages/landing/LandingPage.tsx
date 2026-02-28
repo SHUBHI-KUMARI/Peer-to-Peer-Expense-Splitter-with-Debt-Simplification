@@ -108,7 +108,7 @@ export default function LandingPage() {
         </h1>
 
         <p className="lp-hero-sub anim-fade-up d2">
-          SmartSplit minimizes the transactions needed to settle group debts using intelligent graph
+          SpliX minimizes the transactions needed to settle group debts using intelligent graph
           optimization. Fewer payments, zero awkwardness.
         </p>
 
@@ -146,7 +146,7 @@ export default function LandingPage() {
                 <div className="lp-browser-dot" style={{ background: '#FFBD2E' }} />
                 <div className="lp-browser-dot" style={{ background: '#28CA41' }} />
               </div>
-              <div className="lp-preview-url">app.smartsplit.io/dashboard</div>
+              <div className="lp-preview-url">app.SpliX.io/dashboard</div>
             </div>
 
             <div className="lp-preview-shell">
@@ -323,7 +323,7 @@ export default function LandingPage() {
                 <div className="lp-bento-tag"><Zap size={11} /> Core Algorithm</div>
                 <div className="lp-bento-title">Graph-based minimum<br />cash flow optimization</div>
                 <div className="lp-bento-desc">
-                  Instead of naive pairwise debts, SmartSplit models your group as a directed weighted graph. Our algorithm
+                  Instead of naive pairwise debts, SpliX models your group as a directed weighted graph. Our algorithm
                   computes the minimum number of transactions to settle all balances — the same approach used in distributed
                   financial systems.
                 </div>
@@ -490,7 +490,7 @@ export default function LandingPage() {
               Built on real graph theory — not guesswork
             </h2>
             <p className="lp-section-sub light">
-              Most apps just show you who owes what. SmartSplit computes the mathematically optimal settlement path using
+              Most apps just show you who owes what. SpliX computes the mathematically optimal settlement path using
               Minimum Cash Flow — a proven algorithm from computer science.
             </p>
             <div className="lp-graph-feature-list">
@@ -570,7 +570,7 @@ export default function LandingPage() {
           </div>
           <div className="lp-testimonials-grid">
             {[
-              { avatar: 'P', bg: 'linear-gradient(135deg,#F59E0B,#D97706)', quote: 'We used to fight over who paid what after every trip. SmartSplit ended that completely — the optimization is genuinely magic. We had 12 debts become 4 transactions.', name: 'Priya Mehta', role: 'UX Designer · Bangalore' },
+              { avatar: 'P', bg: 'linear-gradient(135deg,#F59E0B,#D97706)', quote: 'We used to fight over who paid what after every trip. SpliX ended that completely — the optimization is genuinely magic. We had 12 debts become 4 transactions.', name: 'Priya Mehta', role: 'UX Designer · Bangalore' },
               { avatar: 'A', bg: 'linear-gradient(135deg,#3B6FD4,#059669)', quote: 'Finally a Splitwise alternative that actually thinks about math. The minimum cash flow algorithm is exactly what group finances needed. Setup took 2 minutes.', name: 'Arjun Sharma', role: 'Software Engineer · Mumbai' },
               { avatar: 'S', bg: 'linear-gradient(135deg,#34D399,#047857)', quote: 'My flatmates and I have been using this for 8 months. The UI is clean, the graphs make intuitive sense, and we\'ve never had a single dispute about money since.', name: 'Sneha Iyer', role: 'Product Manager · Delhi' },
             ].map(({ avatar, bg, quote, name, role }, i) => (
@@ -662,7 +662,7 @@ export default function LandingPage() {
           </div>
           <div className="lp-faq-grid">
             {[
-              { q: 'How is SmartSplit different from Splitwise?',      a: 'Splitwise shows pairwise debts. SmartSplit runs a graph optimization algorithm that computes the mathematically minimum number of transactions to fully settle a group — often reducing payments by 50% or more.' },
+              { q: 'How is SpliX different from Splitwise?',      a: 'Splitwise shows pairwise debts. SpliX runs a graph optimization algorithm that computes the mathematically minimum number of transactions to fully settle a group — often reducing payments by 50% or more.' },
               { q: 'What is Minimum Cash Flow?',                       a: "It's a graph algorithm that computes net balances for each person, then greedily matches the largest creditor with the largest debtor, reducing the total number of transactions to settle all debts simultaneously." },
               { q: 'Is my data secure?',                               a: 'Yes. All data is encrypted at rest and in transit. We use industry-standard OAuth 2.0 for authentication and store only the minimum required data. We do not sell your data — ever.' },
               { q: 'Does it support multiple currencies?',             a: 'Yes. You can set a default currency per group. Multi-currency support within a single group is on our roadmap for Q2 2025.' },
@@ -748,7 +748,7 @@ export default function LandingPage() {
           </div>
 
           <div className="lp-footer-bottom">
-            <span>© 2025 SmartSplit Technologies. All rights reserved.</span>
+            <span>© 2025 SpliX Technologies. All rights reserved.</span>
             <div className="lp-footer-bottom-links">
               {['Privacy','Terms','Cookies'].map(l => (
                 <div key={l} className="lp-footer-bottom-link">{l}</div>

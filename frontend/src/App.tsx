@@ -4,7 +4,11 @@ import { useAuth } from './context/useAuth'
 import LandingPage from './pages/landing/LandingPage'
 import LoginPage from './pages/auth/LoginPage'
 import SignupPage from './pages/auth/SignupPage'
-import DashboardPage from './pages/dashboard/DashboardPage'
+import DashboardLayout from './pages/dashboard/DashboardLayout'
+import DashboardHome from './pages/dashboard/DashboardHome'
+import GroupsPage from './pages/dashboard/GroupsPage'
+import GroupDetailPage from './pages/dashboard/GroupDetailPage'
+import SettlePage from './pages/dashboard/SettlePage'
 
 /* Redirect authenticated users away from auth pages */
 function GuestRoute({ children }: { children: React.ReactNode }) {
@@ -34,8 +38,13 @@ export default function App() {
           <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
           <Route path="/signup" element={<GuestRoute><SignupPage /></GuestRoute>} />
 
-          {/* Protected routes */}
-          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          {/* Protected dashboard routes with shared layout */}
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+            <Route index element={<DashboardHome />} />
+            <Route path="groups" element={<GroupsPage />} />
+            <Route path="groups/:id" element={<GroupDetailPage />} />
+            <Route path="settle" element={<SettlePage />} />
+          </Route>
 
           {/* Default redirect */}
           <Route path="*" element={<Navigate to="/" replace />} />

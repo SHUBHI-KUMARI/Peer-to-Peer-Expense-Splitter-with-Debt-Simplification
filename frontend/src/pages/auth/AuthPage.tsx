@@ -84,7 +84,7 @@ export default function AuthPage() {
               </div>
             </div>
 
-            <div className="auth-copyright">© 2025 SmartSplit. All rights reserved.</div>
+            <div className="auth-copyright">© 2025 SpliX. All rights reserved.</div>
           </div>
 
           {/* ── Right form panel ── */}
@@ -94,7 +94,7 @@ export default function AuthPage() {
               {mode === 'login' ? (
                 <>
                   <div className="auth-form-title">Welcome back</div>
-                  <div className="auth-form-sub">Sign in to your SmartSplit account</div>
+                  <div className="auth-form-sub">Sign in to your SpliX account</div>
                 </>
               ) : (
                 <>

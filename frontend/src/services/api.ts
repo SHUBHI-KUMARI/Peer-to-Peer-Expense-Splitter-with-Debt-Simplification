@@ -88,7 +88,7 @@ async function tryRefreshToken(): Promise<boolean> {
   }
 }
 
-/* ── Auth API ── */
+/* ── Shared Types ── */
 export interface User {
   userId: number
   username: string
@@ -98,12 +98,91 @@ export interface User {
   createdAt?: string
 }
 
+export interface GroupMember {
+  membershipId: number
+  userId: number
+  groupId: number
+  role: string
+  isActive: boolean
+  user: Pick<User, 'userId' | 'username' | 'email' | 'profileImg'>
+}
+
+export interface Group {
+  groupId: number
+  groupName: string
+  createdBy: number
+  isDeleted: boolean
+  createdAt: string
+  updatedAt: string
+  memberships: GroupMember[]
+  _count?: { expenses: number }
+  expenses?: Expense[]
+}
+
+export interface ExpenseSplit {
+  splitId: number
+  expenseId: number
+  userId: number
+  shareAmount: number
+  user?: Pick<User, 'userId' | 'username'>
+}
+
+export interface Expense {
+  expenseId: number
+  groupId: number
+  paidBy: number
+  title: string
+  description?: string | null
+  amount: number
+  createdAt: string
+  updatedAt: string
+  isDeleted: boolean
+  payer?: Pick<User, 'userId' | 'username' | 'email'>
+  splits?: ExpenseSplit[]
+}
+
+export interface Balance {
+  user: Pick<User, 'userId' | 'username' | 'email'>
+  balance: number
+  status: 'gets back' | 'owes' | 'settled'
+}
+
+export interface Settlement {
+  settlementId: number
+  groupId: number
+  payerId: number
+  payeeId: number
+  amount: number
+  status: string
+  createdAt: string
+  payer?: Pick<User, 'userId' | 'username' | 'email'>
+  payee?: Pick<User, 'userId' | 'username' | 'email'>
+}
+
+export interface OptimizedTransaction {
+  from: number
+  fromName?: string
+  to: number
+  toName?: string
+  amount: number
+}
+
+export interface OptimizeResult {
+  groupId: number
+  memberBalances: { userId: number; username: string; balance: number }[]
+  beforeGraph: { from: number; to: number; amount: number }[]
+  afterGraph: OptimizedTransaction[]
+  optimization: { before: number; after: number; saved: number; percentSaved: number }
+  transactions: OptimizedTransaction[]
+}
+
 interface AuthResponse {
   user: User
   accessToken: string
   refreshToken: string
 }
 
+/* ── Auth API ── */
 export const authApi = {
   register(data: {
     username: string
@@ -139,29 +218,29 @@ export const authApi = {
 /* ── Groups API ── */
 export const groupsApi = {
   create(groupName: string) {
-    return request<{ group: unknown }>('/groups', {
+    return request<{ group: Group }>('/groups', {
       method: 'POST',
       body: JSON.stringify({ groupName }),
     })
   },
 
   getMyGroups() {
-    return request<{ groups: unknown[] }>('/groups')
+    return request<{ groups: Group[] }>('/groups')
   },
 
   getById(id: number) {
-    return request<{ group: unknown }>(`/groups/${id}`)
+    return request<{ group: Group }>(`/groups/${id}`)
   },
 
   invite(groupId: number, email: string) {
-    return request<{ message: string; member: unknown }>(`/groups/${groupId}/invite`, {
+    return request<{ message: string; member: GroupMember }>(`/groups/${groupId}/invite`, {
       method: 'POST',
       body: JSON.stringify({ email }),
     })
   },
 
   getBalances(groupId: number) {
-    return request<{ balances: unknown[] }>(`/groups/${groupId}/balances`)
+    return request<{ balances: Balance[] }>(`/groups/${groupId}/balances`)
   },
 }
 
@@ -174,20 +253,20 @@ export const expensesApi = {
     splitType: string
     splits?: { userId: number; percentage?: number; amount?: number; shareAmount?: number }[]
   }) {
-    return request<{ expense: unknown }>(`/groups/${groupId}/expenses`, {
+    return request<{ expense: Expense }>(`/groups/${groupId}/expenses`, {
       method: 'POST',
       body: JSON.stringify(data),
     })
   },
 
   getAll(groupId: number, page = 1, limit = 10) {
-    return request<{ expenses: unknown[]; total: number; page: number; totalPages: number }>(
+    return request<{ expenses: Expense[]; total: number; page: number; totalPages: number }>(
       `/groups/${groupId}/expenses?page=${page}&limit=${limit}`,
     )
   },
 
   edit(expenseId: number, data: { title?: string; description?: string; amount?: number }) {
-    return request<{ expense: unknown }>(`/expenses/${expenseId}`, {
+    return request<{ expense: Expense }>(`/expenses/${expenseId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     })
@@ -197,5 +276,29 @@ export const expensesApi = {
     return request<{ message: string }>(`/expenses/${expenseId}`, {
       method: 'DELETE',
     })
+  },
+}
+
+/* ── Settlements API ── */
+export const settlementsApi = {
+  optimize(groupId: number) {
+    return request<OptimizeResult>(`/groups/${groupId}/settle/optimize`)
+  },
+
+  confirm(groupId: number, transactions: OptimizedTransaction[]) {
+    return request<{ message: string; settlements: Settlement[] }>(`/groups/${groupId}/settle/confirm`, {
+      method: 'POST',
+      body: JSON.stringify({ transactions }),
+    })
+  },
+
+  complete(settlementId: number) {
+    return request<{ message: string; settlement: Settlement }>(`/settlements/${settlementId}/complete`, {
+      method: 'PUT',
+    })
+  },
+
+  history(groupId: number) {
+    return request<{ settlements: Settlement[] }>(`/groups/${groupId}/settle/history`)
   },
 }

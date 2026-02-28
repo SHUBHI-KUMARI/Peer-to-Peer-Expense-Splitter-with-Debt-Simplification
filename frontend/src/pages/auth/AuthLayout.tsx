@@ -35,7 +35,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               </div>
             </div>
 
-            <div className="auth-copyright">© 2025 SmartSplit. All rights reserved.</div>
+            <div className="auth-copyright">© 2025 SpliX. All rights reserved.</div>
           </div>
 
           {/* ── Right form panel ── */}

@@ -46,7 +46,7 @@ export default function LoginPage() {
       <form className="auth-form" onSubmit={handleSubmit} noValidate>
 
         <div className="auth-form-title">Welcome back</div>
-        <div className="auth-form-sub">Sign in to your SmartSplit account</div>
+        <div className="auth-form-sub">Sign in to your SpliX account</div>
 
         {errors._global && <div className="auth-error">{errors._global}</div>}
 
