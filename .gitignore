@@ -2,7 +2,8 @@
 .env
 .env.local
 .env.*.local
-
+design.html
+landingpage.html
 # Python
 __pycache__/
 *.py[cod]
