@@ -142,16 +142,12 @@ User → React Frontend → Express API → Service Layer → MCF Algorithm → 
 
 ### ER Diagram
 
-> _(Add ER diagram image here)_
-
-### ER Diagram Description
-
-7 core tables:
-
 ```mermaid
 ---
 config:
   layout: elk
+  theme: redux-color
+  look: neo
 ---
 erDiagram
 	direction LR
@@ -265,7 +261,6 @@ erDiagram
 	GROUP_EXPENSES||--o{SETTLEMENTS:"includes"
 	GROUP_EXPENSE_SPLITS||--o{PERSONAL_EXPENSES:"references"
 	GROUP_EXPENSE_SPLITS||--o{SETTLEMENTS:"settles"
-
 ```
 
 | Table                 | Purpose                                         |
