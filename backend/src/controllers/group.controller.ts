@@ -2,7 +2,6 @@ import { Response } from "express";
 import { AuthRequest } from "../middleware/auth.middleware";
 import prisma from "../config/prisma";
 
-// Create a new group
 export const createGroup = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { groupName } = req.body;
@@ -17,36 +16,34 @@ export const createGroup = async (req: AuthRequest, res: Response): Promise<void
       data: {
         groupName,
         createdBy: userId,
-        memberships: {
-          create: {
-            userId,
-            role: "admin",
-            isActive: true
-          }
+        members: {
+          create: { userId, role: "admin", isActive: true }
         }
       },
-      include: { memberships: true }
+      include: { members: true }
     });
 
     res.status(201).json({ group });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    console.error(error);
+    res.status(500).json({ message: "Server error", error: String(error) });
   }
 };
 
-// Get all groups for logged in user
 export const getMyGroups = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.userId!;
 
     const groups = await prisma.group.findMany({
       where: {
-        memberships: { some: { userId, isActive: true } },
+        members: { some: { userId, isActive: true } },
         isDeleted: false
       },
       include: {
-        memberships: {
-          include: { user: { select: { userId: true, username: true, email: true, profileImg: true } } }
+        members: {
+          include: {
+            user: { select: { userId: true, username: true, email: true, profileImg: true } }
+          }
         },
         _count: { select: { expenses: true } }
       }
@@ -54,25 +51,26 @@ export const getMyGroups = async (req: AuthRequest, res: Response): Promise<void
 
     res.json({ groups });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ message: "Server error", error: String(error) });
   }
 };
 
-// Get single group details
 export const getGroupById = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.userId!;
-    const groupId = parseInt(req.params.id as string);;
+    const groupId = parseInt(req.params.id as string);
 
     const group = await prisma.group.findFirst({
       where: {
         groupId,
         isDeleted: false,
-        memberships: { some: { userId, isActive: true } }
+        members: { some: { userId, isActive: true } }
       },
       include: {
-        memberships: {
-          include: { user: { select: { userId: true, username: true, email: true, profileImg: true } } }
+        members: {
+          include: {
+            user: { select: { userId: true, username: true, email: true, profileImg: true } }
+          }
         },
         expenses: {
           where: { isDeleted: false },
@@ -89,11 +87,10 @@ export const getGroupById = async (req: AuthRequest, res: Response): Promise<voi
 
     res.json({ group });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ message: "Server error", error: String(error) });
   }
 };
 
-// Invite a member by email
 export const inviteMember = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.userId!;
@@ -105,7 +102,6 @@ export const inviteMember = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
-    // Check if requester is admin
     const membership = await prisma.groupMembership.findFirst({
       where: { groupId, userId, role: "admin", isActive: true }
     });
@@ -115,7 +111,6 @@ export const inviteMember = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
-    // Find the user to invite
     const userToInvite = await prisma.user.findUnique({ where: { email } });
 
     if (!userToInvite) {
@@ -123,7 +118,6 @@ export const inviteMember = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
-    // Check if already a member
     const existing = await prisma.groupMembership.findFirst({
       where: { groupId, userId: userToInvite.userId, isActive: true }
     });
@@ -133,14 +127,8 @@ export const inviteMember = async (req: AuthRequest, res: Response): Promise<voi
       return;
     }
 
-    // Add them directly
     const newMember = await prisma.groupMembership.create({
-      data: {
-        groupId,
-        userId: userToInvite.userId,
-        role: "member",
-        isActive: true
-      },
+      data: { groupId, userId: userToInvite.userId, role: "member", isActive: true },
       include: {
         user: { select: { userId: true, username: true, email: true } }
       }
@@ -148,17 +136,15 @@ export const inviteMember = async (req: AuthRequest, res: Response): Promise<voi
 
     res.status(201).json({ message: "Member added successfully", member: newMember });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ message: "Server error", error: String(error) });
   }
 };
 
-// Get net balances for each member in a group
 export const getGroupBalances = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.userId!;
     const groupId = parseInt(req.params.id as string);
 
-    // Check membership
     const membership = await prisma.groupMembership.findFirst({
       where: { groupId, userId, isActive: true }
     });
@@ -168,34 +154,21 @@ export const getGroupBalances = async (req: AuthRequest, res: Response): Promise
       return;
     }
 
-    // Get all members
     const members = await prisma.groupMembership.findMany({
       where: { groupId, isActive: true },
       include: { user: { select: { userId: true, username: true, email: true } } }
     });
 
-    // Get all expenses with splits
     const expenses = await prisma.groupExpense.findMany({
       where: { groupId, isDeleted: false },
       include: { splits: true }
     });
 
-    // Calculate net balance per user
-    // Positive = owed money, Negative = owes money
     const balanceMap: Record<number, number> = {};
-
-    members.forEach(m => {
-      balanceMap[m.userId] = 0;
-    });
+    members.forEach(m => { balanceMap[m.userId] = 0; });
 
     expenses.forEach(expense => {
-      const payerId = expense.paidBy;
-      const totalAmount = Number(expense.amount);
-
-      // Payer gets credited the full amount
-      balanceMap[payerId] = (balanceMap[payerId] || 0) + totalAmount;
-
-      // Each split person gets debited their share
+      balanceMap[expense.paidBy] = (balanceMap[expense.paidBy] || 0) + Number(expense.amount);
       expense.splits.forEach(split => {
         balanceMap[split.userId] = (balanceMap[split.userId] || 0) - Number(split.shareAmount);
       });
@@ -209,6 +182,6 @@ export const getGroupBalances = async (req: AuthRequest, res: Response): Promise
 
     res.json({ balances });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+    res.status(500).json({ message: "Server error", error: String(error) });
   }
 };
