@@ -1,13 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  provider = "prisma-client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -15,38 +8,38 @@ datasource db {
 }
 
 model User {
-  userId       Int      @id @default(autoincrement())
+  userId       Int      @id @default(autoincrement()) @map("user_id")
   username     String
   email        String   @unique
-  phoneNumber  String?  @unique
-  passwordHash String?
-  googleId     String?  @unique
-  profileImg   String?
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  phoneNumber  String?  @unique @map("phone_number")
+  passwordHash String?  @map("password_hash")
+  googleId     String?  @unique @map("google_id")
+  profileImg   String?  @map("profile_img")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
   // Relations
-  sessions          Session[]
-  groupMemberships  GroupMembership[]
-  personalExpenses  PersonalExpense[]
-  expensesPaid      GroupExpense[]        @relation("ExpensePaidBy")
-  expenseSplits     GroupExpenseSplit[]
-  settlementsPaid   Settlement[]          @relation("SettlementPaidBy")
+  sessions            Session[]
+  groupMemberships    GroupMembership[]
+  personalExpenses    PersonalExpense[]
+  paidExpenses        GroupExpense[]      @relation("ExpensePaidBy")
+  expenseSplits       GroupExpenseSplit[]
+  settlementsPaid     Settlement[]        @relation("SettlementPaidBy")
   settlementsReceived Settlement[]        @relation("SettlementPaidTo")
-  notifications     Notification[]
-  invitationsSent   Invitation[]          @relation("InvitedBy")
-  groupsCreated     Group[]               @relation("GroupCreatedBy")
+  notifications       Notification[]
+  createdGroups       Group[]             @relation("GroupCreatedBy")
+  sentInvitations     Invitation[]        @relation("InvitationSentBy")
 
   @@map("users")
 }
 
 model Session {
-  sessionId    Int      @id @default(autoincrement())
-  userId       Int
-  refreshToken String
-  expiresAt    DateTime
-  createdAt    DateTime @default(now())
+  sessionId    Int      @id @default(autoincrement()) @map("session_id")
+  userId       Int      @map("user_id")
+  refreshToken String   @map("refresh_token")
+  expiresAt    DateTime @map("expires_at")
+  createdAt    DateTime @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
@@ -54,65 +47,63 @@ model Session {
 }
 
 model Group {
-  groupId   Int      @id @default(autoincrement())
-  groupName String
-  createdBy Int
-  isDeleted Boolean  @default(false)
-  createdAt DateTime @default(now())
+  groupId   Int      @id @default(autoincrement()) @map("group_id")
+  groupName String   @map("group_name")
+  createdBy Int      @map("created_by")
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
 
-  // Relations
-  creator     User              @relation("GroupCreatedBy", fields: [createdBy], references: [userId])
-  members     GroupMembership[]
-  expenses    GroupExpense[]
-  settlements Settlement[]
-  invitations Invitation[]
+  creator       User              @relation("GroupCreatedBy", fields: [createdBy], references: [userId])
+  memberships   GroupMembership[]
+  invitations   Invitation[]
+  expenses      GroupExpense[]
+  settlements   Settlement[]
   notifications Notification[]
 
   @@map("groups")
 }
 
 model GroupMembership {
-  membershipId Int      @id @default(autoincrement())
-  userId       Int
-  groupId      Int
-  role         String   @default("member") // "admin" | "member"
-  isActive     Boolean  @default(true)
-  joinedAt     DateTime @default(now())
+  membershipId Int      @id @default(autoincrement()) @map("membership_id")
+  userId       Int      @map("user_id")
+  groupId      Int      @map("group_id")
+  role         String   @default("member")
+  isActive     Boolean  @default(true) @map("is_active")
+  joinedAt     DateTime @default(now()) @map("joined_at")
 
   user  User  @relation(fields: [userId], references: [userId], onDelete: Cascade)
   group Group @relation(fields: [groupId], references: [groupId], onDelete: Cascade)
 
   @@unique([userId, groupId])
-  @@map("group_memberships")
+  @@map("group_membership")
 }
 
 model Invitation {
-  invitationId  Int      @id @default(autoincrement())
-  groupId       Int
-  invitedPhone  String
-  invitedBy     Int
-  status        String   @default("pending") // "pending" | "accepted" | "declined"
-  createdAt     DateTime @default(now())
+  invitationId Int      @id @default(autoincrement()) @map("invitation_id")
+  groupId      Int      @map("group_id")
+  invitedPhone String   @map("invited_phone")
+  invitedBy    Int      @map("invited_by")
+  status       String   @default("pending") // pending | accepted | declined
+  createdAt    DateTime @default(now()) @map("created_at")
 
   group   Group @relation(fields: [groupId], references: [groupId], onDelete: Cascade)
-  inviter User  @relation("InvitedBy", fields: [invitedBy], references: [userId])
+  inviter User  @relation("InvitationSentBy", fields: [invitedBy], references: [userId])
 
   @@map("invitations")
 }
 
 model GroupExpense {
-  expenseId   Int      @id @default(autoincrement())
-  groupId     Int
-  paidBy      Int
+  expenseId   Int      @id @default(autoincrement()) @map("expense_id")
+  groupId     Int      @map("group_id")
+  paidBy      Int      @map("paid_by")
   title       String
   description String?
   amount      Decimal  @db.Decimal(10, 2)
-  splitType   String   @default("equal") // "equal" | "percentage" | "exact" | "custom"
-  isDeleted   Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
 
-  group       Group              @relation(fields: [groupId], references: [groupId], onDelete: Cascade)
-  payer       User               @relation("ExpensePaidBy", fields: [paidBy], references: [userId])
+  group       Group               @relation(fields: [groupId], references: [groupId], onDelete: Cascade)
+  payer       User                @relation("ExpensePaidBy", fields: [paidBy], references: [userId])
   splits      GroupExpenseSplit[]
   settlements Settlement[]
 
@@ -120,62 +111,67 @@ model GroupExpense {
 }
 
 model GroupExpenseSplit {
-  splitId     Int     @id @default(autoincrement())
-  expenseId   Int
-  userId      Int
-  shareAmount Decimal @db.Decimal(10, 2)
-  isSettled   Boolean @default(false)
+  splitId     Int     @id @default(autoincrement()) @map("split_id")
+  expenseId   Int     @map("expense_id")
+  userId      Int     @map("user_id")
+  shareAmount Decimal @map("share_amount") @db.Decimal(10, 2)
+  isSettled   Boolean @default(false) @map("is_settled")
 
-  expense GroupExpense @relation(fields: [expenseId], references: [expenseId], onDelete: Cascade)
-  user    User         @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  expense          GroupExpense      @relation(fields: [expenseId], references: [expenseId], onDelete: Cascade)
+  user             User              @relation(fields: [userId], references: [userId])
+  personalExpenses PersonalExpense[]
+  settlements      Settlement[]
 
   @@unique([expenseId, userId])
   @@map("group_expense_splits")
 }
 
 model PersonalExpense {
-  personalExpenseId Int      @id @default(autoincrement())
-  userId            Int
+  personalExpenseId Int      @id @default(autoincrement()) @map("personal_expense_id")
+  userId            Int      @map("user_id")
+  splitId           Int?     @map("split_id") // optional reference from GROUP_EXPENSE_SPLITS
   title             String
   description       String?
   amount            Decimal  @db.Decimal(10, 2)
   category          String?
-  createdAt         DateTime @default(now())
+  createdAt         DateTime @default(now()) @map("created_at")
 
-  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  user  User               @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  split GroupExpenseSplit? @relation(fields: [splitId], references: [splitId])
 
   @@map("personal_expenses")
 }
 
 model Settlement {
-  settlementId Int      @id @default(autoincrement())
-  groupId      Int
-  paidBy       Int
-  paidTo       Int
+  settlementId Int      @id @default(autoincrement()) @map("settlement_id")
+  groupId      Int      @map("group_id")
+  expenseId    Int?     @map("expense_id") // optional link to specific expense
+  splitId      Int?     @map("split_id") // optional link to specific split
+  paidBy       Int      @map("paid_by")
+  paidTo       Int      @map("paid_to")
   amount       Decimal  @db.Decimal(10, 2)
-  isCompleted  Boolean  @default(false)
-  expenseId    Int?
-  createdAt    DateTime @default(now())
+  createdAt    DateTime @default(now()) @map("created_at")
 
-  group    Group        @relation(fields: [groupId], references: [groupId], onDelete: Cascade)
-  payer    User         @relation("SettlementPaidBy", fields: [paidBy], references: [userId])
-  payee    User         @relation("SettlementPaidTo", fields: [paidTo], references: [userId])
-  expense  GroupExpense? @relation(fields: [expenseId], references: [expenseId])
+  group   Group              @relation(fields: [groupId], references: [groupId], onDelete: Cascade)
+  expense GroupExpense?      @relation(fields: [expenseId], references: [expenseId])
+  split   GroupExpenseSplit? @relation(fields: [splitId], references: [splitId])
+  payer   User               @relation("SettlementPaidBy", fields: [paidBy], references: [userId])
+  payee   User               @relation("SettlementPaidTo", fields: [paidTo], references: [userId])
 
   @@map("settlements")
 }
 
 model Notification {
-  notificationId Int      @id @default(autoincrement())
-  userId         Int
-  groupId        Int?
-  type           String   // "expense_added" | "settlement_due" | "payment_received" etc.
+  notificationId Int      @id @default(autoincrement()) @map("notification_id")
+  userId         Int      @map("user_id")
+  groupId        Int?     @map("group_id") // optional group context
+  type           String
   message        String
-  isRead         Boolean  @default(false)
-  createdAt      DateTime @default(now())
+  isRead         Boolean  @default(false) @map("is_read")
+  createdAt      DateTime @default(now()) @map("created_at")
 
   user  User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  group Group? @relation(fields: [groupId], references: [groupId], onDelete: SetNull)
+  group Group? @relation(fields: [groupId], references: [groupId])
 
   @@map("notifications")
 }
