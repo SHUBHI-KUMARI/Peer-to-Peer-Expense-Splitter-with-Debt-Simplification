@@ -69,7 +69,7 @@ export default function LandingPage() {
       <nav className={`lp-nav${scrolled ? ' scrolled' : ''}`}>
         <div className="lp-nav-logo" onClick={() => scrollTo('hero')} style={{ cursor: 'pointer' }}>
           <div className="lp-nav-logo-icon">S</div>
-          <div className="lp-nav-logo-text">Smart<span>Split</span></div>
+          <div className="lp-nav-logo-text">Spli<span style={{ fontWeight: 900 }}>X</span></div>
         </div>
 
         <div className="lp-nav-links">

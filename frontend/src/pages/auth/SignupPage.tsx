@@ -1,12 +1,17 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import AuthLayout, { GoogleIcon } from './AuthLayout'
+import { useAuth } from '../../context/useAuth'
 
 export default function SignupPage() {
+  const { signup } = useAuth()
+  const navigate = useNavigate()
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
+    phoneNumber: '',
     password: '',
     confirmPassword: '',
   })
@@ -34,10 +39,22 @@ export default function SignupPage() {
     e.preventDefault()
     if (!validate()) return
     setSubmitting(true)
-    // TODO: wire up to backend API
-    await new Promise(r => setTimeout(r, 800))
-    setSubmitting(false)
-    alert('Account created!')
+    setErrors({})
+    try {
+      const username = `${formData.firstName.trim()} ${formData.lastName.trim()}`
+      await signup({
+        username,
+        email: formData.email,
+        password: formData.password,
+        ...(formData.phoneNumber.trim() ? { phoneNumber: formData.phoneNumber.trim() } : {}),
+      })
+      navigate('/dashboard')
+    } catch (err: unknown) {
+      const apiErr = err as { message?: string }
+      setErrors({ _global: apiErr?.message || 'Something went wrong' })
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -97,6 +114,22 @@ export default function SignupPage() {
               autoComplete="email"
             />
             {errors.email && <span style={{ fontSize: 12, color: 'var(--danger-500)' }}>{errors.email}</span>}
+          </div>
+
+          {/* Phone number (optional) */}
+          <div className="input-wrapper">
+            <label className="input-label" htmlFor="phoneNumber">Phone number <span style={{ opacity: 0.5, fontWeight: 400 }}>(optional)</span></label>
+            <input
+              id="phoneNumber"
+              name="phoneNumber"
+              className={`input-field${errors.phoneNumber ? ' error' : ''}`}
+              type="tel"
+              placeholder="+91 98765 43210"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              autoComplete="tel"
+            />
+            {errors.phoneNumber && <span style={{ fontSize: 12, color: 'var(--danger-500)' }}>{errors.phoneNumber}</span>}
           </div>
 
           {/* Password */}

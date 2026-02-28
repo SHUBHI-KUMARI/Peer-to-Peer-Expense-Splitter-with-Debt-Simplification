@@ -1,0 +1,136 @@
+/* ── Dashboard page styles ── */
+
+.dashboard-root {
+  min-height: 100vh;
+  background: var(--gray-950, #060D1A);
+  color: var(--gray-100, #F1F5F9);
+}
+
+/* Navbar */
+.dashboard-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--gray-800, #1E293B);
+  background: rgba(6, 13, 26, 0.85);
+  backdrop-filter: blur(12px);
+}
+
+.dashboard-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.dashboard-logo-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--primary-500, #2154B3), var(--accent-400, #10B981));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display, 'Sora'), sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+.dashboard-logo-text {
+  font-family: var(--font-display, 'Sora'), sans-serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--gray-100);
+}
+
+.dashboard-logo-text span {
+  color: var(--primary-400, #4B83E0);
+}
+
+.dashboard-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.dashboard-greeting {
+  font-size: 0.9rem;
+  color: var(--gray-300, #94A3B8);
+}
+
+.dashboard-logout-btn {
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--gray-700, #334155);
+  background: transparent;
+  color: var(--gray-300, #94A3B8);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dashboard-logout-btn:hover {
+  background: var(--gray-800, #1E293B);
+  color: var(--gray-100);
+}
+
+/* Main */
+.dashboard-main {
+  max-width: 720px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+}
+
+.dashboard-welcome-card {
+  background: var(--gray-900, #0B1120);
+  border: 1px solid var(--gray-800, #1E293B);
+  border-radius: 16px;
+  padding: 2.5rem;
+}
+
+.dashboard-welcome-card h1 {
+  font-family: var(--font-display, 'Sora'), sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-welcome-card p {
+  color: var(--gray-400, #64748B);
+  font-size: 0.95rem;
+}
+
+.dashboard-welcome-card strong {
+  color: var(--primary-400, #4B83E0);
+}
+
+.dashboard-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.dashboard-info-item {
+  background: var(--gray-800, #1E293B);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.dashboard-info-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-500, #475569);
+}
+
+.dashboard-info-value {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--gray-100);
+  word-break: break-all;
+}

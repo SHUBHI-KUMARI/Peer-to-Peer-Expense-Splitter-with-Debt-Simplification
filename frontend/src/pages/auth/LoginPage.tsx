@@ -1,8 +1,12 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import AuthLayout, { GoogleIcon } from './AuthLayout'
+import { useAuth } from '../../context/useAuth'
 
 export default function LoginPage() {
+  const { login } = useAuth()
+  const navigate = useNavigate()
+
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [submitting, setSubmitting] = useState(false)
@@ -25,10 +29,16 @@ export default function LoginPage() {
     e.preventDefault()
     if (!validate()) return
     setSubmitting(true)
-    // TODO: wire up to backend API
-    await new Promise(r => setTimeout(r, 800))
-    setSubmitting(false)
-    alert('Login submitted!')
+    setErrors({})
+    try {
+      await login(formData.email, formData.password)
+      navigate('/dashboard')
+    } catch (err: unknown) {
+      const apiErr = err as { message?: string }
+      setErrors({ _global: apiErr?.message || 'Invalid email or password' })
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
