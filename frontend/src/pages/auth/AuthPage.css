@@ -364,3 +364,19 @@
     border-radius: var(--radius-xl);
   }
 }
+
+@media (max-width: 480px) {
+  .auth-right {
+    padding: 24px 16px;
+  }
+  .auth-screen-card {
+    padding: 20px 16px;
+    border-radius: var(--radius-lg);
+  }
+  .name-row {
+    grid-template-columns: 1fr;
+  }
+  .auth-title {
+    font-size: 22px;
+  }
+}

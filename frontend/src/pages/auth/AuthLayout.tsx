@@ -20,7 +20,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <div className="auth-left">
             <div className="sidebar-logo">
               <div className="logo-icon">S</div>
-              <div className="logo-text">Smart<span>Split</span></div>
+              <div className="logo-text">Spli<span>X</span></div>
             </div>
 
             <div>

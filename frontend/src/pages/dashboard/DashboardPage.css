@@ -134,3 +134,17 @@
   color: var(--gray-100);
   word-break: break-all;
 }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .dashboard-nav { padding: 0.75rem 1rem; }
+  .dashboard-main { margin: 1.5rem auto; padding: 0 1rem; }
+  .dashboard-welcome-card { padding: 1.5rem; }
+  .dashboard-welcome-card h1 { font-size: 1.3rem; }
+  .dashboard-info-grid { grid-template-columns: 1fr; }
+  .dashboard-greeting { display: none; }
+}
+@media (max-width: 480px) {
+  .dashboard-welcome-card { padding: 1.2rem; }
+  .dashboard-welcome-card h1 { font-size: 1.15rem; }
+}

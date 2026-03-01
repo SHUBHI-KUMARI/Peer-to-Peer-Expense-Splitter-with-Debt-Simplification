@@ -1,4 +1,5 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/useAuth'
 import {
   LayoutDashboard,
@@ -8,6 +9,8 @@ import {
   BarChart3,
   Settings,
   LogOut,
+  Menu,
+  X,
 } from 'lucide-react'
 import './DashboardLayout.css'
 
@@ -22,6 +25,13 @@ const navItems = [
 export default function DashboardLayout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  /* Close sidebar on route change (mobile) */
+  useEffect(() => {
+    setSidebarOpen(false)
+  }, [location.pathname])
 
   const initials = user?.username
     ? user.username
@@ -39,12 +49,38 @@ export default function DashboardLayout() {
 
   return (
     <div className="app-shell">
+      {/* Mobile header */}
+      <header className="mobile-header">
+        <button
+          className="hamburger-btn"
+          onClick={() => setSidebarOpen((o) => !o)}
+          aria-label="Toggle menu"
+        >
+          {sidebarOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
+        <div className="mobile-logo">
+          <div className="logo-icon">S</div>
+          <div className="logo-text">
+            Spli<span>X</span>
+          </div>
+        </div>
+        <div className="mobile-avatar">{initials}</div>
+      </header>
+
+      {/* Backdrop overlay for mobile */}
+      {sidebarOpen && (
+        <div
+          className="sidebar-overlay"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="sidebar-logo">
           <div className="logo-icon">S</div>
           <div className="logo-text">
-            Smart<span>Split</span>
+            Spli<span>X</span>
           </div>
         </div>
 

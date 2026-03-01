@@ -5,7 +5,7 @@ import {
   Bell, BarChart3, Globe, Link2, Scale, TrendingUp,
   Twitter, Linkedin, Github, Mail, Plus, Minus,
   LayoutDashboard, Settings, Plane, Home, Utensils, PartyPopper,
-  ChevronRight, Star,
+  ChevronRight, Star, Menu, X,
 } from 'lucide-react'
 import './LandingPage.css'
 
@@ -49,6 +49,7 @@ const Stars = ({ n = 5 }: { n?: number }) => (
 export default function LandingPage() {
   const navigate = useNavigate()
   const [scrolled, setScrolled] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40)
@@ -58,6 +59,7 @@ export default function LandingPage() {
 
   const scrollTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+    setMobileMenuOpen(false)
   }
 
   return (
@@ -66,7 +68,7 @@ export default function LandingPage() {
       {/* ════════════════════════════════════════
           NAVBAR
       ════════════════════════════════════════ */}
-      <nav className={`lp-nav${scrolled ? ' scrolled' : ''}`}>
+      <nav className={`lp-nav${scrolled ? ' scrolled' : ''}${mobileMenuOpen ? ' menu-open' : ''}`}>
         <div className="lp-nav-logo" onClick={() => scrollTo('hero')} style={{ cursor: 'pointer' }}>
           <div className="lp-nav-logo-icon">S</div>
           <div className="lp-nav-logo-text">Spli<span style={{ fontWeight: 900 }}>X</span></div>
@@ -86,6 +88,32 @@ export default function LandingPage() {
             Get started free <ChevronRight size={14} />
           </button>
         </div>
+
+        {/* Mobile hamburger */}
+        <button
+          className="lp-mobile-toggle"
+          onClick={() => setMobileMenuOpen(o => !o)}
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen
+            ? <X size={22} />
+            : <Menu size={22} />
+          }
+        </button>
+
+        {/* Mobile dropdown menu */}
+        {mobileMenuOpen && (
+          <div className="lp-mobile-menu">
+            {(['features', 'how', 'pricing', 'faq'] as const).map(id => (
+              <button key={id} className="lp-mobile-link" onClick={() => scrollTo(id)}>
+                {id.charAt(0).toUpperCase() + id.slice(1)}
+              </button>
+            ))}
+            <div className="lp-mobile-menu-actions">
+              <button className="lp-btn-ghost" onClick={() => { navigate('/login'); setMobileMenuOpen(false) }}>Sign in</button>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* ════════════════════════════════════════

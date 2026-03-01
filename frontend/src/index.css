@@ -118,3 +118,34 @@ button {
 
 /* Keep legacy override block empty — all button styles defined per-component */
 button:hover {}
+
+/* ============================================
+   GLOBAL UX ENHANCEMENTS
+============================================ */
+
+/* Custom scrollbar (Webkit) */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--gray-400); }
+
+/* Firefox scrollbar */
+* { scrollbar-width: thin; scrollbar-color: var(--gray-300) transparent; }
+
+/* Text selection */
+::selection { background: var(--primary-100); color: var(--primary-900); }
+
+/* Focus visible ring for accessibility */
+:focus-visible {
+  outline: 2px solid var(--primary-400);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Remove tap highlight on mobile */
+@media (max-width: 768px) {
+  * { -webkit-tap-highlight-color: transparent; }
+}
