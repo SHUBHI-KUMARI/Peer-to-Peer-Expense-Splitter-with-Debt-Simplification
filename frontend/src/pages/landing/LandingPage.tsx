@@ -440,7 +440,7 @@ export default function LandingPage() {
             <div className="lp-bento-card lp-bc-4">
               <div className="lp-bento-card-inner">
                 <div className="lp-bento-tag"><Scale size={11} /> Flexible</div>
-                <div className="lp-bento-title">4 ways to split</div>
+                <div className="lp-bento-title">3 ways to split</div>
                 <div className="lp-split-types">
                   {[
                     { icon: '÷', label: 'Equal', desc: 'Divided evenly', active: true },
@@ -612,64 +612,6 @@ export default function LandingPage() {
                     <div className="lp-tcard-role">{role}</div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════
-          PRICING
-      ════════════════════════════════════════ */}
-      <section className="lp-section lp-pricing-section" id="pricing">
-        <div className="lp-section-inner">
-          <div className="lp-section-center">
-            <div className="lp-eyebrow" style={{ margin: '0 auto 18px' }}>Pricing</div>
-            <h2 className="lp-section-title dark">Simple, honest pricing</h2>
-            <p className="lp-section-sub dark" style={{ margin: '0 auto' }}>
-              Start free, upgrade when your groups grow. No hidden fees, no per-transaction charges.
-            </p>
-          </div>
-          <div className="lp-pricing-grid">
-            {[
-              {
-                name: 'Free', price: '0', period: 'Forever free', popular: false,
-                desc: 'Perfect for getting started with a small group or trying out the optimization engine.',
-                features: ['Up to 3 groups', '10 expenses per group', 'Graph optimization', 'Basic analytics', 'Mobile app'],
-                cta: 'Start free',
-              },
-              {
-                name: 'Pro', price: '299', period: 'per month, billed annually', popular: true,
-                desc: 'For active groups that settle often. Unlimited everything with priority support.',
-                features: ['Unlimited groups', 'Unlimited expenses', 'Advanced optimization', 'Full analytics & exports', 'Settlement history', 'Priority support'],
-                cta: 'Get Pro',
-              },
-              {
-                name: 'Team', price: '899', period: 'per month, up to 20 members', popular: false,
-                desc: 'For offices, organizations, and large friend groups that need collaboration features.',
-                features: ['Everything in Pro', 'Admin controls', 'Team analytics dashboard', 'CSV / PDF export', 'Dedicated support', 'SSO (coming soon)'],
-                cta: 'Contact sales',
-              },
-            ].map(({ name, price, period, popular, desc, features, cta }, i) => (
-              <div key={i} className={`lp-pricing-card${popular ? ' popular' : ''}`}>
-                {popular && <div className="lp-popular-pill">Most Popular</div>}
-                <div className="lp-plan-name">{name}</div>
-                <div className="lp-plan-price"><span>₹</span>{price}</div>
-                <div className="lp-plan-period">{period}</div>
-                <div className="lp-plan-desc">{desc}</div>
-                <div className="lp-plan-divider" />
-                <div className="lp-plan-features">
-                  {features.map(f => (
-                    <div key={f} className="lp-plan-feature">
-                      <div className="lp-feature-check"><CheckCircle size={10} /></div>
-                      {f}
-                    </div>
-                  ))}
-                </div>
-                {popular
-                  ? <button className="lp-plan-cta-primary" onClick={() => navigate('/signup')}>{cta} →</button>
-                  : <button className="lp-plan-cta-ghost" onClick={() => navigate('/signup')}>{cta} →</button>
-                }
               </div>
             ))}
           </div>
