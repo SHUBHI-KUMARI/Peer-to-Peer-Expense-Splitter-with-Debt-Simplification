@@ -4,6 +4,7 @@
 .env.*.local
 design.html
 landingpage.html
+projectStructure.html
 # Python
 __pycache__/
 *.py[cod]

@@ -28,7 +28,7 @@ export default function DashboardPage() {
 
       <main className="dashboard-main">
         <div className="dashboard-welcome-card">
-          <h1>Welcome to SmartSplit</h1>
+          <h1>Welcome to SpliX</h1>
           <p>You're signed in as <strong>{user?.email}</strong></p>
           <div className="dashboard-info-grid">
             <div className="dashboard-info-item">

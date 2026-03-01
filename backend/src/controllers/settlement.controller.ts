@@ -172,10 +172,23 @@ export const confirmSettlement = async (req: AuthRequest, res: Response): Promis
             )
         );
 
+        // reshape to match frontend Settlement type
+        const shaped = settlements.map(s => ({
+            settlementId: s.settlementId,
+            groupId: s.groupId,
+            paidBy: s.paidBy,
+            paidTo: s.paidTo,
+            amount: Number(s.amount),
+            isCompleted: s.isCompleted,
+            createdAt: s.createdAt,
+            payer: s.users_settlements_paidByTousers,
+            payee: s.users_settlements_paidToTousers,
+        }));
+
         res.status(201).json({
             message: "Settlement plan confirmed",
-            settlements,
-            totalSettlements: settlements.length,
+            settlements: shaped,
+            totalSettlements: shaped.length,
         });
     } catch (error) {
         console.error("CONFIRM SETTLEMENT ERROR:", error);
@@ -220,7 +233,20 @@ export const completeSettlement = async (req: AuthRequest, res: Response): Promi
             },
         });
 
-        res.json({ message: "Settlement marked as complete", settlement: updated });
+        // reshape to match frontend Settlement type
+        const shaped = {
+            settlementId: updated.settlementId,
+            groupId: updated.groupId,
+            paidBy: updated.paidBy,
+            paidTo: updated.paidTo,
+            amount: Number(updated.amount),
+            isCompleted: updated.isCompleted,
+            createdAt: updated.createdAt,
+            payer: updated.users_settlements_paidByTousers,
+            payee: updated.users_settlements_paidToTousers,
+        };
+
+        res.json({ message: "Settlement marked as complete", settlement: shaped });
     } catch (error) {
         console.error("COMPLETE SETTLEMENT ERROR:", error);
         res.status(500).json({ message: "Server error", error: String(error) });
@@ -257,10 +283,23 @@ export const getSettlementHistory = async (req: AuthRequest, res: Response): Pro
 
         const totalAmount = settlements.reduce((sum, s) => sum + Number(s.amount), 0);
 
+        // reshape to match frontend Settlement type
+        const shaped = settlements.map(s => ({
+            settlementId: s.settlementId,
+            groupId: s.groupId,
+            paidBy: s.paidBy,
+            paidTo: s.paidTo,
+            amount: Number(s.amount),
+            isCompleted: s.isCompleted,
+            createdAt: s.createdAt,
+            payer: s.users_settlements_paidByTousers,
+            payee: s.users_settlements_paidToTousers,
+        }));
+
         res.json({
             groupId,
-            settlements,
-            totalSettlements: settlements.length,
+            settlements: shaped,
+            totalSettlements: shaped.length,
             totalAmount: Math.round(totalAmount * 100) / 100,
         });
     } catch (error) {

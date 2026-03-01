@@ -11,7 +11,17 @@ import analyticsRoutes from "./routes/analytics.routes";
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+// CORS configuration for deployment
+const corsOptions = {
+  origin: process.env.CORS_ORIGINS?.split(",").map((origin) => origin.trim()) || "*",
+  credentials: true,
+  optionsSuccessStatus: 200,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get("/", (req, res) => {

@@ -159,11 +159,11 @@ export default function LandingPage() {
                 <div className="lp-preview-nav">
                   {[
                     { label: 'Dashboard', icon: <LayoutDashboard size={12} />, active: true },
-                    { label: 'Groups',    icon: <Users      size={12} /> },
-                    { label: 'Expenses',  icon: <Receipt    size={12} /> },
-                    { label: 'Settle Up', icon: <Zap        size={12} /> },
-                    { label: 'Analytics', icon: <BarChart3  size={12} /> },
-                    { label: 'Settings',  icon: <Settings   size={12} /> },
+                    { label: 'Groups', icon: <Users size={12} /> },
+                    { label: 'Expenses', icon: <Receipt size={12} /> },
+                    { label: 'Settle Up', icon: <Zap size={12} /> },
+                    { label: 'Analytics', icon: <BarChart3 size={12} /> },
+                    { label: 'Settings', icon: <Settings size={12} /> },
                   ].map(({ label, icon, active }) => (
                     <div key={label} className={`lp-p-nav-item${active ? ' active' : ''}`}>
                       {icon} {label}
@@ -189,8 +189,8 @@ export default function LandingPage() {
                       <div className="lp-p-card-title">Recent Activity</div>
                       {[
                         { l: 'P', bg: 'linear-gradient(135deg,#F59E0B,#D97706)', text: <><strong>Priya</strong> added Dinner at Truffles</>, amt: '-₹680', cls: 'r' },
-                        { l: 'R', bg: 'linear-gradient(135deg,#3B6FD4,#059669)', text: <>You settled up with <strong>Arjun</strong></>,       amt: '+₹2,100', cls: 'g' },
-                        { l: 'A', bg: 'linear-gradient(135deg,#F98080,#E02424)', text: <><strong>Arjun</strong> added Uber to Airport</>,       amt: '-₹340', cls: 'r' },
+                        { l: 'R', bg: 'linear-gradient(135deg,#3B6FD4,#059669)', text: <>You settled up with <strong>Arjun</strong></>, amt: '+₹2,100', cls: 'g' },
+                        { l: 'A', bg: 'linear-gradient(135deg,#F98080,#E02424)', text: <><strong>Arjun</strong> added Uber to Airport</>, amt: '-₹340', cls: 'r' },
                       ].map(({ l, bg, text, amt, cls }, i) => (
                         <div key={i} className="lp-p-feed-item">
                           <div className="lp-p-avatar" style={{ background: bg }}>{l}</div>
@@ -202,9 +202,9 @@ export default function LandingPage() {
                     <div className="lp-p-card">
                       <div className="lp-p-card-title">Groups</div>
                       {[
-                        { icon: <Plane size={12} />,     name: 'Goa Trip',     bal: '-₹1,420', col: '#E02424' },
-                        { icon: <Home  size={12} />,     name: 'Mumbai Flat',  bal: '+₹3,100', col: '#059669' },
-                        { icon: <Utensils size={12} />,  name: 'Office Lunch', bal: '+₹840',   col: '#059669' },
+                        { icon: <Plane size={12} />, name: 'Goa Trip', bal: '-₹1,420', col: '#E02424' },
+                        { icon: <Home size={12} />, name: 'Mumbai Flat', bal: '+₹3,100', col: '#059669' },
+                        { icon: <Utensils size={12} />, name: 'Office Lunch', bal: '+₹840', col: '#059669' },
                       ].map(({ icon, name, bal, col }, i) => (
                         <div key={i} className="lp-p-group-item">
                           <div className="lp-p-group-icon">{icon}</div>
@@ -269,10 +269,10 @@ export default function LandingPage() {
           </div>
           <div className="lp-how-grid">
             {[
-              { num: '01', icon: <Users size={24} />,        title: 'Create a Group',    desc: 'Name your group, invite friends by phone or email. Works for trips, flatmates, events — any shared expense scenario.' },
-              { num: '02', icon: <Receipt size={24} />,      title: 'Add Expenses',      desc: 'Log who paid and split equally, by percentage, or exact amounts. Add a description to keep everyone on the same page.' },
-              { num: '03', icon: <Zap size={24} />,          title: 'Run Optimization',  desc: 'Our graph algorithm runs Minimum Cash Flow to eliminate redundant transactions. 6 debts become 3 in one click.' },
-              { num: '04', icon: <CheckCircle size={24} />,  title: 'Settle Up',         desc: 'Follow the optimized payment list. Mark transactions as done. The group is settled, history logged, everyone\'s happy.' },
+              { num: '01', icon: <Users size={24} />, title: 'Create a Group', desc: 'Name your group, invite friends by phone or email. Works for trips, flatmates, events — any shared expense scenario.' },
+              { num: '02', icon: <Receipt size={24} />, title: 'Add Expenses', desc: 'Log who paid and split equally, by percentage, or exact amounts. Add a description to keep everyone on the same page.' },
+              { num: '03', icon: <Zap size={24} />, title: 'Run Optimization', desc: 'Our graph algorithm runs Minimum Cash Flow to eliminate redundant transactions. 6 debts become 3 in one click.' },
+              { num: '04', icon: <CheckCircle size={24} />, title: 'Settle Up', desc: 'Follow the optimized payment list. Mark transactions as done. The group is settled, history logged, everyone\'s happy.' },
             ].map(({ num, icon, title, desc }, i) => (
               <div key={i} className="lp-how-step">
                 {i < 3 && <div className="lp-step-connector" />}
@@ -292,10 +292,10 @@ export default function LandingPage() {
       <div className="lp-stats-bar-section">
         <div className="lp-stats-bar-inner">
           {[
-            { val: <>12<span className="accent">k+</span></>,    label: 'Active users globally' },
-            { val: <>52<span className="accent">%</span></>,     label: 'Average transactions saved' },
-            { val: <>₹2.4<span className="accent">Cr</span></>,  label: 'Total amount settled' },
-            { val: <>4.9<span className="accent">★</span></>,    label: 'Average user rating' },
+            { val: <>12<span className="accent">k+</span></>, label: 'Active users globally' },
+            { val: <>52<span className="accent">%</span></>, label: 'Average transactions saved' },
+            { val: <>₹2.4<span className="accent">Cr</span></>, label: 'Total amount settled' },
+            { val: <>4.9<span className="accent">★</span></>, label: 'Average user rating' },
           ].map(({ val, label }, i) => (
             <div key={i} className="lp-stat-item">
               <div className="lp-stat-item-val">{val}</div>
@@ -343,8 +343,8 @@ export default function LandingPage() {
                     <text x="116" y="115" textAnchor="middle" fontFamily="Sora,sans-serif" fontSize="10" fontWeight="600" fill="#9B1C1C">S</text>
                     <circle cx="72" cy="170" r="18" fill="#EEF4FE" stroke="#ADC6F5" strokeWidth="1.5" />
                     <text x="72" y="175" textAnchor="middle" fontFamily="Sora,sans-serif" fontSize="10" fontWeight="600" fill="#1A3F85">R</text>
-                    <line x1="67" y1="67" x2="35" y2="93"   stroke="#F05252" strokeWidth="1.5" strokeDasharray="4,3" opacity="0.7" />
-                    <line x1="77" y1="67" x2="109" y2="93"  stroke="#F05252" strokeWidth="1.5" strokeDasharray="4,3" opacity="0.7" />
+                    <line x1="67" y1="67" x2="35" y2="93" stroke="#F05252" strokeWidth="1.5" strokeDasharray="4,3" opacity="0.7" />
+                    <line x1="77" y1="67" x2="109" y2="93" stroke="#F05252" strokeWidth="1.5" strokeDasharray="4,3" opacity="0.7" />
                     <line x1="40" y1="125" x2="62" y2="153" stroke="#F05252" strokeWidth="1.5" strokeDasharray="4,3" opacity="0.7" />
                     <line x1="104" y1="125" x2="82" y2="153" stroke="#F05252" strokeWidth="1.5" strokeDasharray="4,3" opacity="0.7" />
                     <line x1="35" y1="105" x2="109" y2="105" stroke="#9CA3AF" strokeWidth="1" strokeDasharray="3,3" opacity="0.4" />
@@ -362,9 +362,9 @@ export default function LandingPage() {
                     <text x="368" y="175" textAnchor="middle" fontFamily="Sora,sans-serif" fontSize="10" fontWeight="600" fill="#9B1C1C">A</text>
                     <circle cx="412" cy="130" r="18" fill="#FDE8E8" stroke="#F98080" strokeWidth="1.5" />
                     <text x="412" y="135" textAnchor="middle" fontFamily="Sora,sans-serif" fontSize="10" fontWeight="600" fill="#9B1C1C">S</text>
-                    <line x1="332" y1="113" x2="358" y2="67"  stroke="#2154B3" strokeWidth="2" markerEnd="url(#arr1)" />
-                    <line x1="368" y1="153" x2="368" y2="68"  stroke="#2154B3" strokeWidth="2" markerEnd="url(#arr1)" />
-                    <line x1="404" y1="113" x2="378" y2="67"  stroke="#2154B3" strokeWidth="2" markerEnd="url(#arr1)" />
+                    <line x1="332" y1="113" x2="358" y2="67" stroke="#2154B3" strokeWidth="2" markerEnd="url(#arr1)" />
+                    <line x1="368" y1="153" x2="368" y2="68" stroke="#2154B3" strokeWidth="2" markerEnd="url(#arr1)" />
+                    <line x1="404" y1="113" x2="378" y2="67" stroke="#2154B3" strokeWidth="2" markerEnd="url(#arr1)" />
                     <text x="368" y="108" textAnchor="middle" fontFamily="DM Sans,sans-serif" fontSize="9" fill="#059669" fontWeight="500">3 transactions</text>
                   </svg>
                 </div>
@@ -394,9 +394,9 @@ export default function LandingPage() {
                 <div className="lp-bento-desc">Every expense, settlement, and invite shows up instantly for all group members.</div>
                 <div className="lp-activity-list">
                   {[
-                    { l: 'P', bg: 'linear-gradient(135deg,#F59E0B,#D97706)', text: <><strong>Priya</strong> added "Dinner" · ₹3,400</>, amt: '-₹680',   col: '#E02424' },
-                    { l: 'R', bg: 'linear-gradient(135deg,#3B6FD4,#059669)', text: <><strong>You</strong> settled with Arjun</>,             amt: '+₹2,100', col: '#059669' },
-                    { l: 'A', bg: 'linear-gradient(135deg,#F98080,#E02424)', text: <><strong>Arjun</strong> added "Uber" · ₹1,700</>,        amt: '-₹340',   col: '#E02424' },
+                    { l: 'P', bg: 'linear-gradient(135deg,#F59E0B,#D97706)', text: <><strong>Priya</strong> added "Dinner" · ₹3,400</>, amt: '-₹680', col: '#E02424' },
+                    { l: 'R', bg: 'linear-gradient(135deg,#3B6FD4,#059669)', text: <><strong>You</strong> settled with Arjun</>, amt: '+₹2,100', col: '#059669' },
+                    { l: 'A', bg: 'linear-gradient(135deg,#F98080,#E02424)', text: <><strong>Arjun</strong> added "Uber" · ₹1,700</>, amt: '-₹340', col: '#E02424' },
                   ].map(({ l, bg, text, amt, col }, i) => (
                     <div key={i} className="lp-act-item">
                       <Avatar label={l} bg={bg} size={28} />
@@ -415,9 +415,9 @@ export default function LandingPage() {
                 <div className="lp-bento-title">4 ways to split</div>
                 <div className="lp-split-types">
                   {[
-                    { icon: '÷', label: 'Equal',      desc: 'Divided evenly',   active: true },
-                    { icon: '%', label: 'Percentage',  desc: 'Custom ratios',    active: false },
-                    { icon: '₹', label: 'Exact',       desc: 'Specific amounts', active: false },
+                    { icon: '÷', label: 'Equal', desc: 'Divided evenly', active: true },
+                    { icon: '%', label: 'Percentage', desc: 'Custom ratios', active: false },
+                    { icon: '₹', label: 'Exact', desc: 'Specific amounts', active: false },
                   ].map(({ icon, label, desc, active }, i) => (
                     <div key={i} className={`lp-split-type-item${active ? ' active' : ''}`}>
                       <div className="lp-split-type-icon">{icon}</div>
@@ -439,10 +439,10 @@ export default function LandingPage() {
                 <div className="lp-bento-desc">Manage your trip, your flat, your office — all in separate groups with independent balances.</div>
                 <div className="lp-group-tags">
                   {[
-                    { icon: <Plane size={11} />,       label: 'Trips',    cls: 'blue'  },
-                    { icon: <Home size={11} />,         label: 'Flatmates', cls: 'green' },
-                    { icon: <Utensils size={11} />,     label: 'Dining',   cls: 'amber' },
-                    { icon: <PartyPopper size={11} />,  label: 'Events',   cls: 'red'   },
+                    { icon: <Plane size={11} />, label: 'Trips', cls: 'blue' },
+                    { icon: <Home size={11} />, label: 'Flatmates', cls: 'green' },
+                    { icon: <Utensils size={11} />, label: 'Dining', cls: 'amber' },
+                    { icon: <PartyPopper size={11} />, label: 'Events', cls: 'red' },
                   ].map(({ icon, label, cls }, i) => (
                     <span key={i} className={`lp-group-tag ${cls}`}>{icon} {label}</span>
                   ))}
@@ -459,17 +459,17 @@ export default function LandingPage() {
                 <div className="lp-bar-chart">
                   {[
                     { h: '100%', bg: '#2154B3', op: 0.8 },
-                    { h: '78%',  bg: '#2154B3', op: 0.6 },
-                    { h: '60%',  bg: '#059669', op: 0.7 },
-                    { h: '45%',  bg: '#059669', op: 0.5 },
-                    { h: '35%',  bg: '#F59E0B', op: 0.7 },
-                    { h: '25%',  bg: '#F98080', op: 0.7 },
+                    { h: '78%', bg: '#2154B3', op: 0.6 },
+                    { h: '60%', bg: '#059669', op: 0.7 },
+                    { h: '45%', bg: '#059669', op: 0.5 },
+                    { h: '35%', bg: '#F59E0B', op: 0.7 },
+                    { h: '25%', bg: '#F98080', op: 0.7 },
                   ].map(({ h, bg, op }, i) => (
                     <div key={i} className="lp-bar-chart-bar" style={{ height: h, background: bg, opacity: op }} />
                   ))}
                 </div>
                 <div className="lp-bar-chart-labels">
-                  {['SEP','OCT','NOV','DEC','JAN','FEB'].map(m => (
+                  {['SEP', 'OCT', 'NOV', 'DEC', 'JAN', 'FEB'].map(m => (
                     <span key={m} className="lp-bar-chart-label">{m}</span>
                   ))}
                 </div>
@@ -495,9 +495,9 @@ export default function LandingPage() {
             </p>
             <div className="lp-graph-feature-list">
               {[
-                { icon: <Link2 size={18} />,       title: 'Directed weighted graph model',   desc: 'Every debt is an edge. Every person is a node. The algorithm treats your group as a financial graph and solves it as a flow optimization problem.' },
-                { icon: <Scale size={18} />,        title: 'Net balance computation',         desc: 'Before optimization, we compute each person\'s net position. Creditors and debtors are matched greedily to minimize total transactions.' },
-                { icon: <TrendingUp size={18} />,   title: 'Scales to any group size',        desc: 'Whether it\'s 3 flatmates or a 20-person team, the algorithm runs in O(n log n). Large groups see the biggest savings.' },
+                { icon: <Link2 size={18} />, title: 'Directed weighted graph model', desc: 'Every debt is an edge. Every person is a node. The algorithm treats your group as a financial graph and solves it as a flow optimization problem.' },
+                { icon: <Scale size={18} />, title: 'Net balance computation', desc: 'Before optimization, we compute each person\'s net position. Creditors and debtors are matched greedily to minimize total transactions.' },
+                { icon: <TrendingUp size={18} />, title: 'Scales to any group size', desc: 'Whether it\'s 3 flatmates or a 20-person team, the algorithm runs in O(n log n). Large groups see the biggest savings.' },
               ].map(({ icon, title, desc }, i) => (
                 <div key={i} className="lp-gf-item">
                   <div className="lp-gf-icon">{icon}</div>
@@ -523,20 +523,20 @@ export default function LandingPage() {
                   </marker>
                 </defs>
                 <text x="170" y="14" textAnchor="middle" fontFamily="DM Mono,sans-serif" fontSize="9" fill="rgba(255,255,255,0.3)" letterSpacing="0.08em">OPTIMIZED GRAPH</text>
-                <circle cx="170" cy="50"  r="24" fill="rgba(33,84,179,0.25)" stroke="#3B6FD4" strokeWidth="2" />
-                <text x="170" y="55"  textAnchor="middle" fontFamily="Sora,sans-serif" fontSize="12" fontWeight="700" fill="#fff">RK</text>
-                <circle cx="60"  cy="140" r="22" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
-                <text x="60"  y="145" textAnchor="middle" fontFamily="Sora,sans-serif" fontSize="11" fontWeight="600" fill="rgba(255,255,255,0.7)">P</text>
+                <circle cx="170" cy="50" r="24" fill="rgba(33,84,179,0.25)" stroke="#3B6FD4" strokeWidth="2" />
+                <text x="170" y="55" textAnchor="middle" fontFamily="Sora,sans-serif" fontSize="12" fontWeight="700" fill="#fff">RK</text>
+                <circle cx="60" cy="140" r="22" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
+                <text x="60" y="145" textAnchor="middle" fontFamily="Sora,sans-serif" fontSize="11" fontWeight="600" fill="rgba(255,255,255,0.7)">P</text>
                 <circle cx="140" cy="220" r="22" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
                 <text x="140" y="225" textAnchor="middle" fontFamily="Sora,sans-serif" fontSize="11" fontWeight="600" fill="rgba(255,255,255,0.7)">A</text>
                 <circle cx="200" cy="220" r="22" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
                 <text x="200" y="225" textAnchor="middle" fontFamily="Sora,sans-serif" fontSize="11" fontWeight="600" fill="rgba(255,255,255,0.7)">S</text>
                 <circle cx="280" cy="140" r="22" fill="rgba(16,185,129,0.15)" stroke="rgba(52,211,153,0.4)" strokeWidth="1.5" />
                 <text x="280" y="145" textAnchor="middle" fontFamily="Sora,sans-serif" fontSize="11" fontWeight="600" fill="#34D399">V</text>
-                <line x1="80"  y1="124" x2="147" y2="70" stroke="#3B6FD4" strokeWidth="2" markerEnd="url(#opt-arr)" />
+                <line x1="80" y1="124" x2="147" y2="70" stroke="#3B6FD4" strokeWidth="2" markerEnd="url(#opt-arr)" />
                 <line x1="160" y1="200" x2="162" y2="74" stroke="#3B6FD4" strokeWidth="2" markerEnd="url(#opt-arr)" />
                 <line x1="200" y1="200" x2="182" y2="70" stroke="#3B6FD4" strokeWidth="2" markerEnd="url(#opt-arr)" />
-                <rect x="86"  y="89"  width="48" height="15" rx="4" fill="rgba(33,84,179,0.3)" />
+                <rect x="86" y="89" width="48" height="15" rx="4" fill="rgba(33,84,179,0.3)" />
                 <text x="110" y="101" textAnchor="middle" fontFamily="DM Mono,sans-serif" fontSize="9" fill="#ADC6F5" fontWeight="500">₹1,420</text>
                 <rect x="126" y="138" width="48" height="15" rx="4" fill="rgba(33,84,179,0.3)" />
                 <text x="150" y="150" textAnchor="middle" fontFamily="DM Mono,sans-serif" fontSize="9" fill="#ADC6F5" fontWeight="500">₹2,100</text>
@@ -607,19 +607,19 @@ export default function LandingPage() {
               {
                 name: 'Free', price: '0', period: 'Forever free', popular: false,
                 desc: 'Perfect for getting started with a small group or trying out the optimization engine.',
-                features: ['Up to 3 groups','10 expenses per group','Graph optimization','Basic analytics','Mobile app'],
+                features: ['Up to 3 groups', '10 expenses per group', 'Graph optimization', 'Basic analytics', 'Mobile app'],
                 cta: 'Start free',
               },
               {
                 name: 'Pro', price: '299', period: 'per month, billed annually', popular: true,
                 desc: 'For active groups that settle often. Unlimited everything with priority support.',
-                features: ['Unlimited groups','Unlimited expenses','Advanced optimization','Full analytics & exports','Settlement history','Priority support'],
+                features: ['Unlimited groups', 'Unlimited expenses', 'Advanced optimization', 'Full analytics & exports', 'Settlement history', 'Priority support'],
                 cta: 'Get Pro',
               },
               {
                 name: 'Team', price: '899', period: 'per month, up to 20 members', popular: false,
                 desc: 'For offices, organizations, and large friend groups that need collaboration features.',
-                features: ['Everything in Pro','Admin controls','Team analytics dashboard','CSV / PDF export','Dedicated support','SSO (coming soon)'],
+                features: ['Everything in Pro', 'Admin controls', 'Team analytics dashboard', 'CSV / PDF export', 'Dedicated support', 'SSO (coming soon)'],
                 cta: 'Contact sales',
               },
             ].map(({ name, price, period, popular, desc, features, cta }, i) => (
@@ -640,7 +640,7 @@ export default function LandingPage() {
                 </div>
                 {popular
                   ? <button className="lp-plan-cta-primary" onClick={() => navigate('/signup')}>{cta} →</button>
-                  : <button className="lp-plan-cta-ghost"   onClick={() => navigate('/signup')}>{cta} →</button>
+                  : <button className="lp-plan-cta-ghost" onClick={() => navigate('/signup')}>{cta} →</button>
                 }
               </div>
             ))}
@@ -662,12 +662,12 @@ export default function LandingPage() {
           </div>
           <div className="lp-faq-grid">
             {[
-              { q: 'How is SpliX different from Splitwise?',      a: 'Splitwise shows pairwise debts. SpliX runs a graph optimization algorithm that computes the mathematically minimum number of transactions to fully settle a group — often reducing payments by 50% or more.' },
-              { q: 'What is Minimum Cash Flow?',                       a: "It's a graph algorithm that computes net balances for each person, then greedily matches the largest creditor with the largest debtor, reducing the total number of transactions to settle all debts simultaneously." },
-              { q: 'Is my data secure?',                               a: 'Yes. All data is encrypted at rest and in transit. We use industry-standard OAuth 2.0 for authentication and store only the minimum required data. We do not sell your data — ever.' },
-              { q: 'Does it support multiple currencies?',             a: 'Yes. You can set a default currency per group. Multi-currency support within a single group is on our roadmap for Q2 2025.' },
-              { q: "Can I use it without everyone signing up?",        a: "You can add members by phone number even if they haven't joined. They'll receive an invite and can view their balance. Full participation requires a free account." },
-              { q: 'What happens to my data if I cancel?',             a: 'You can export all your data as CSV or PDF before cancelling. After 30 days of account closure, all personal data is permanently deleted from our servers.' },
+              { q: 'How is SpliX different from Splitwise?', a: 'Splitwise shows pairwise debts. SpliX runs a graph optimization algorithm that computes the mathematically minimum number of transactions to fully settle a group — often reducing payments by 50% or more.' },
+              { q: 'What is Minimum Cash Flow?', a: "It's a graph algorithm that computes net balances for each person, then greedily matches the largest creditor with the largest debtor, reducing the total number of transactions to settle all debts simultaneously." },
+              { q: 'Is my data secure?', a: 'Yes. All data is encrypted at rest and in transit. We use industry-standard OAuth 2.0 for authentication and store only the minimum required data. We do not sell your data — ever.' },
+              { q: 'Does it support multiple currencies?', a: 'Yes. You can set a default currency per group. Multi-currency support within a single group is on our roadmap for Q2 2025.' },
+              { q: "Can I use it without everyone signing up?", a: "You can add members by phone number even if they haven't joined. They'll receive an invite and can view their balance. Full participation requires a free account." },
+              { q: 'What happens to my data if I cancel?', a: 'You can export all your data as CSV or PDF before cancelling. After 30 days of account closure, all personal data is permanently deleted from our servers.' },
             ].map(({ q, a }) => (
               <FaqItem key={q} q={q} a={a} />
             ))}
@@ -715,10 +715,10 @@ export default function LandingPage() {
             <div>
               <div className="lp-footer-logo">
                 <div className="lp-footer-logo-icon">S</div>
-                <div className="lp-footer-logo-text">Smart<span>Split</span></div>
+                <div className="lp-footer-logo-text">Spli<span>X</span></div>
               </div>
               <div className="lp-footer-tagline">
-                Intelligent graph-based expense settlement for modern groups. Split smarter, not harder.
+                Intelligent graph-based expense settlement for modern groups. Optimize smarter, settle faster.
               </div>
               <div className="lp-footer-social">
                 {[
@@ -733,10 +733,10 @@ export default function LandingPage() {
             </div>
 
             {[
-              { title: 'Product',  links: ['Features','Pricing','Changelog','Roadmap','API Docs'] },
-              { title: 'Company',  links: ['About','Blog','Careers','Press Kit'] },
-              { title: 'Support',  links: ['Help Center','Contact Us','Status','Community'] },
-              { title: 'Legal',    links: ['Privacy Policy','Terms of Service','Cookie Policy','Security'] },
+              { title: 'Product', links: ['Features', 'Pricing', 'Changelog', 'Roadmap', 'API Docs'] },
+              { title: 'Company', links: ['About', 'Blog', 'Careers', 'Press Kit'] },
+              { title: 'Support', links: ['Help Center', 'Contact Us', 'Status', 'Community'] },
+              { title: 'Legal', links: ['Privacy Policy', 'Terms of Service', 'Cookie Policy', 'Security'] },
             ].map(({ title, links }) => (
               <div key={title} className="lp-footer-col">
                 <h5>{title}</h5>
@@ -750,7 +750,7 @@ export default function LandingPage() {
           <div className="lp-footer-bottom">
             <span>© 2025 SpliX Technologies. All rights reserved.</span>
             <div className="lp-footer-bottom-links">
-              {['Privacy','Terms','Cookies'].map(l => (
+              {['Privacy', 'Terms', 'Cookies'].map(l => (
                 <div key={l} className="lp-footer-bottom-link">{l}</div>
               ))}
             </div>

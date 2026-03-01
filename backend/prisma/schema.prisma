@@ -117,12 +117,12 @@ model PersonalExpense {
 }
 
 model Settlement {
-  settlementId                    Int           @id @default(autoincrement())
-  groupId                         Int
-  paidBy                          Int
-  paidTo                          Int
-  amount                          Decimal       @db.Decimal(10, 2)
-  
+  settlementId Int     @id @default(autoincrement())
+  groupId      Int
+  paidBy       Int
+  paidTo       Int
+  amount       Decimal @db.Decimal(10, 2)
+
   expenseId                       Int?
   createdAt                       DateTime      @default(now())
   isCompleted                     Boolean?      @default(false) @map("is_completed")

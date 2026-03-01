@@ -45,7 +45,15 @@ export const getMyGroups = async (req: AuthRequest, res: Response): Promise<void
             users: { select: { userId: true, username: true, email: true, profileImg: true } }
           }
         },
-        _count: { select: { group_expenses: true } }
+        _count: { select: { group_expenses: true } },
+        group_expenses: {
+          where: { isDeleted: false },
+          orderBy: { createdAt: "desc" },
+          take: 5,
+          include: {
+            users: { select: { userId: true, username: true, email: true } }
+          }
+        }
       }
     });
 
@@ -64,7 +72,17 @@ export const getMyGroups = async (req: AuthRequest, res: Response): Promise<void
         isActive: m.isActive,
         user: m.users
       })),
-      _count: { expenses: g._count.group_expenses }
+      _count: { expenses: g._count.group_expenses },
+      expenses: g.group_expenses.map(e => ({
+        expenseId: e.expenseId,
+        groupId: e.groupId,
+        paidBy: e.paidBy,
+        title: e.title,
+        description: e.description,
+        amount: Number(e.amount),
+        createdAt: e.createdAt,
+        payer: e.users
+      }))
     }));
 
     res.json({ groups: shaped });
@@ -195,7 +213,17 @@ export const inviteMember = async (req: AuthRequest, res: Response): Promise<voi
       }
     });
 
-    res.status(201).json({ message: "Member added successfully", member: newMember });
+    res.status(201).json({
+      message: "Member added successfully",
+      member: {
+        membershipId: newMember.membershipId,
+        userId: newMember.userId,
+        groupId: newMember.groupId,
+        role: newMember.role,
+        isActive: newMember.isActive,
+        user: newMember.users
+      }
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: String(error) });
   }
